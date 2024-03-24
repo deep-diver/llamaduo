@@ -5,3 +5,4 @@ accelerate
 bitsandbytes
 datasets
 google-generativeai
+toml
