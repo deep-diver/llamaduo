@@ -39,9 +39,9 @@ def _eval_on_single_record(model, tokenizer, data, eval_prompt_tmpl, gemini_api_
 
 def eval_on_records(
     model_id, 
-    test_dataset_id, test_dataset_split="test_sft", 
-    config_path="config/sample_config.yaml", eval_prompt_tmpl_path="config/prompts.toml",
-    avg_similarity_threshold=90, avg_precision_threshold=90, gemini_api_key=None
+    test_dataset_id, test_dataset_split,
+    config_path, eval_prompt_tmpl_path,
+    avg_similarity_threshold, avg_precision_threshold, gemini_api_key
 ):
     model_args, data_args, _ = get_args(config_path)
     tokenizer, model = get_model(model_id, model_args, data_args)
