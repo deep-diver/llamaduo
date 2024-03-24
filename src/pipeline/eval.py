@@ -51,10 +51,13 @@ def eval_on_records(
     ds = _get_test_dataset(test_dataset_id, test_dataset_split)
     eval_prompt_tmpl = _get_eval_prompt_tmpl(eval_prompt_tmpl_path)
     
-    for data in ds:
+    for idx, data in enumerate(ds):
         assessments = _eval_on_single_record(model, tokenizer, data, eval_prompt_tmpl, gemini_api_key)
-        total_similarity_scores = total_similarity_scores + assessments['similarity_assessment']['score']
-        total_precision_scores = total_precision_scores + assessments['precision_assessment']['score']
+        similarity_score = assessments['similarity_assessment']['score']
+        precision_score = assessments['precision_assessment']['score']
+        total_similarity_scores = total_similarity_scores + similarity_score
+        total_precision_scores = total_precision_scores + precision_score
+        print(f"eval on {idx}...similarity_score: {similarity_score}, precision_score: {precision_score}")
     
     avg_similarity_scores = total_similarity_scores / len(ds)
     avg_precision_scores = total_precision_scores / len(ds)
