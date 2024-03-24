@@ -1,0 +1,7 @@
+git+https://github.com/huggingface/alignment-handbook.git@main
+transformers
+peft
+accelerate
+bitsandbytes
+datasets
+google-generativeai
