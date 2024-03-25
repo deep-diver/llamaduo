@@ -93,12 +93,12 @@ def eval_on_records(
         batch_data = ds[idx:idx+batch_size]
         assessments = _eval_on_records(model, tokenizer, batch_data, eval_prompt_tmpl, gemini_api_key, eval_workers)
         
-        for assessment in assessments:
+        for partial_idx, assessment in enumerate(assessments):
             similarity_score = assessment['similarity_assessment']['score']
             precision_score = assessment['precision_assessment']['score']
             total_similarity_scores = total_similarity_scores + similarity_score
             total_precision_scores = total_precision_scores + precision_score
-            print(f"eval on {idx}...similarity_score: {similarity_score}, precision_score: {precision_score}")
+            print(f"eval on {idx+partial_idx}...similarity_score: {similarity_score}, precision_score: {precision_score}")
     
     avg_similarity_scores = total_similarity_scores / len(ds)
     avg_precision_scores = total_precision_scores / len(ds)
