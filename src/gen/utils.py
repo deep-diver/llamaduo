@@ -46,10 +46,12 @@ def _required_keys_exist(assessment_json):
     """
     _required_keys_exist checks if required keys exist in the given assessment_json
     """    
-    keys_to_check = set(["precision_assessment", "precision_assessment"])
+    keys_to_check = set(["similarity_assessment", "precision_assessment"])
     qualified = keys_to_check.issubset(set(assessment_json.keys()))
     if qualified is False:
         raise ValueError("missing required keys")
+
+    return assessment_json
 
 async def call_service_llm(prompt, gemini_api_key, retry_num=3):
     """
@@ -68,7 +70,7 @@ async def call_service_llm(prompt, gemini_api_key, retry_num=3):
             )
 
             assessment_json = _parse_first_json_snippet(assessment)
-            _required_keys_exist(assessment_json)
+            assessment_json = _required_keys_exist(assessment_json)
         except Exception as e:
             cur_retry = cur_retry + 1
             print(f"......retry [{e}]")
