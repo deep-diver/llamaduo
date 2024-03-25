@@ -10,6 +10,7 @@ def main(args):
             pass
         
         if "eval" in input_steps:
+            print("processing eval step...")
             qualification, (avg_similarity_scores, avg_precision_scores) = eval_on_records(
                 args.ft_model_id, 
                 args.test_ds_id, args.test_ds_split, 
