@@ -32,10 +32,15 @@ def parse_first_json_snippet(snippet):
 		try:
 			json_parsed_string = find_json_snippet(snippet)
 		except Exception as e:
-			print(e)
 			raise ValueError()
 
 	return json_parsed_string
+
+def required_keys_exist(assessment_json):
+    keys_to_check = set(["precision_assessment", "precision_assessment"])
+    qualified = keys_to_check.issubset(set(assessment_json.keys()))
+    if qualified is False:
+        raise ValueError("missing required keys")
 
 def call_service_llm(prompt, gemini_api_key, retry_num=3):
     assessment_json = None
@@ -49,6 +54,7 @@ def call_service_llm(prompt, gemini_api_key, retry_num=3):
             )
 
             assessment_json = parse_first_json_snippet(assessment)
+            required_keys_exist(assessment_json)
         except Exception as e:
             cur_retry = cur_retry + 1
             print(f"......retry [{e}]")
