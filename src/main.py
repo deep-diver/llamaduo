@@ -1,7 +1,7 @@
 import argparse
 
 from pipeline.eval import eval_on_records
-from utils import get_steps_right
+from utils import validate_steps
 
 def main(args):
     if args.load_in_8bit is True \
@@ -9,7 +9,7 @@ def main(args):
         raise ValueError("both load_in_8bit and load_in_4bit are set. "
                          "only one of them should be set at a time")
     
-    valid, input_steps = get_steps_right(args.steps)
+    valid, input_steps = validate_steps(args.steps)
     if valid:
         if "fine-tuning" in input_steps:
             pass

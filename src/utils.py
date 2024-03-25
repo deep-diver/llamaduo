@@ -30,7 +30,7 @@ def _remove_duplicates(input_steps):
     """
     return list(dict.fromkeys(input_steps))
 
-def get_steps_right(input_steps):
+def validate_steps(input_steps):
     """
     get_steps_right on the given input_steps:
     1. remove duplicate values
