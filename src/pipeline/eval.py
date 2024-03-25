@@ -120,8 +120,8 @@ async def eval_on_records(
                 total_precision_scores = total_precision_scores + precision_score
                 print(f"eval on (sample_num={idx+partial_idx}, repeat={repeat_idx}) / similarity_score: {similarity_score}, precision_score: {precision_score}")
     
-    avg_similarity_scores = total_similarity_scores / len(ds)
-    avg_precision_scores = total_precision_scores / len(ds)
+    avg_similarity_scores = total_similarity_scores / (len(ds) * repeat)
+    avg_precision_scores = total_precision_scores / (len(ds) * repeat)
     
     qualification = avg_similarity_scores >= avg_similarity_threshold and avg_precision_scores >= avg_precision_threshold
     return {
