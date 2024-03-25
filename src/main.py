@@ -11,7 +11,7 @@ def main(args):
     
     valid, input_steps = get_steps_right(args.steps)
     if valid:
-        if "ft" in input_steps:
+        if "fine-tuning" in input_steps:
             pass
         
         if "eval" in input_steps:

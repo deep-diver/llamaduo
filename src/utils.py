@@ -1,9 +1,9 @@
 def _sort_step_order(input_steps):
     """
     _sort_step_order makes sure the given input_steps to be organized in
-    ["ft", "eval", "synth-gen", "deploy"] order
+    ["fine-tuning", "eval", "synth-gen", "deploy"] order
     """
-    correct_order = ["ft", "eval", "synth-gen", "deploy"]
+    correct_order = ["fine-tuning", "eval", "synth-gen", "deploy"]
 
     def custom_sort(input_steps):
         def get_index(value):
@@ -21,7 +21,7 @@ def _all_steps_allowed(input_steps):
     """
     _all_steps_allowed makes sure there are only allowed values in the input_steps
     """
-    allowed_steps = {"ft", "eval", "synth-gen", "deploy"}
+    allowed_steps = {"fine-tuning", "eval", "synth-gen", "deploy"}
     return all(value in allowed_steps for value in input_steps)
 
 def _remove_duplicates(input_steps):
