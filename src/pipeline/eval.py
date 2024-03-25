@@ -80,4 +80,8 @@ def eval_on_records(
     avg_precision_scores = total_precision_scores / len(ds)
     
     qualification = avg_similarity_scores >= avg_similarity_threshold and avg_precision_scores >= avg_precision_threshold
-    return qualification, (avg_similarity_scores, avg_precision_scores)
+    return {
+        "qualification": qualification, 
+        "avg_similarity_scores": avg_similarity_scores,
+        "avg_precision_scores": avg_precision_scores
+    }

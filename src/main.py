@@ -16,7 +16,7 @@ def main(args):
         
         if "eval" in input_steps:
             print("processing eval step...")
-            qualification, (avg_similarity_scores, avg_precision_scores) = eval_on_records(
+            qualification_results = eval_on_records(
                 args.ft_model_id,
                 args.load_in_8bit, args.load_in_4bit,
                 args.test_ds_id, args.test_ds_split, 
@@ -24,7 +24,7 @@ def main(args):
                 args.avg_similarity_threshold, args.avg_precision_threshold,
                 args.gemini_api_key
             )
-            print(f"qualification: {qualification}, avg_similarity_scores: {avg_similarity_scores}, avg_precision_scores: {avg_precision_scores}")
+            print(qualification_results)
         
         if "synth-gen" in input_steps:
             pass
