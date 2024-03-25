@@ -4,6 +4,11 @@ from pipeline.eval import eval_on_records
 from utils import get_steps_right
 
 def main(args):
+    if args.load_in_8bit is True \
+        and args.load_in_4bit is True:
+        raise ValueError("both load_in_8bit and load_in_4bit are set. "
+                         "only one of them should be set at a time")
+    
     valid, input_steps = get_steps_right(args.steps)
     if valid:
         if "ft" in input_steps:
@@ -12,7 +17,8 @@ def main(args):
         if "eval" in input_steps:
             print("processing eval step...")
             qualification, (avg_similarity_scores, avg_precision_scores) = eval_on_records(
-                args.ft_model_id, 
+                args.ft_model_id,
+                args.load_in_8bit, args.load_in_4bit,
                 args.test_ds_id, args.test_ds_split, 
                 args.ft_model_config_path, args.prompt_tmpl_path,
                 args.avg_similarity_threshold, args.avg_precision_threshold,
@@ -35,6 +41,8 @@ if __name__ == "__main__":
     # common 
     parser.add_argument("--ft-model-id", type=str, default=None)
     parser.add_argument("--ft-model-config-path", type=str, default="config/sample_config.yaml")
+    parser.add_argument("--load-in-8bit", action="store_true")
+    parser.add_argument("--load-in-4bit", action="store_true")
     
     # for eval step
     parser.add_argument("--test-ds-id", type=str, default=None)

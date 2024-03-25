@@ -52,6 +52,7 @@ def _eval_on_single_record(model, tokenizer, data, eval_prompt_tmpl, gemini_api_
 
 def eval_on_records(
     model_id, 
+    load_in_8bit, load_in_4bit,
     test_dataset_id, test_dataset_split,
     config_path, eval_prompt_tmpl_path,
     avg_similarity_threshold, avg_precision_threshold, gemini_api_key
@@ -60,7 +61,7 @@ def eval_on_records(
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
     """
     model_args, data_args, _ = get_args(config_path)
-    tokenizer, model = get_model(model_id, model_args, data_args)
+    tokenizer, model = get_model(model_id, load_in_8bit, load_in_4bit, model_args, data_args)
     
     total_similarity_scores = 0
     total_precision_scores = 0
