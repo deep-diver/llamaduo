@@ -51,7 +51,7 @@ def _required_keys_exist(assessment_json):
     if qualified is False:
         raise ValueError("missing required keys")
 
-def call_service_llm(prompt, gemini_api_key, retry_num=3):
+async def call_service_llm(prompt, gemini_api_key, retry_num=3):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -62,7 +62,7 @@ def call_service_llm(prompt, gemini_api_key, retry_num=3):
 
     while assessment_json is None and cur_retry < retry_num:
         try:
-            assessment = call_gemini(
+            assessment = await call_gemini(
                 prompt=prompt,
                 api_key=gemini_api_key
             )

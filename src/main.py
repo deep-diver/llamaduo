@@ -19,10 +19,10 @@ def main(args):
             qualification_results = eval_on_records(
                 args.ft_model_id,
                 args.load_in_8bit, args.load_in_4bit,
-                args.test_ds_id, args.test_ds_split, 
+                args.test_ds_id, args.test_ds_split, args.batch_size,
                 args.ft_model_config_path, args.prompt_tmpl_path,
-                args.avg_similarity_threshold, args.avg_precision_threshold,
-                args.gemini_api_key
+                args.eval_workers, args.avg_similarity_threshold, 
+                args.avg_precision_threshold, args.gemini_api_key
             )
             print(qualification_results)
         
@@ -47,6 +47,8 @@ if __name__ == "__main__":
     # for eval step
     parser.add_argument("--test-ds-id", type=str, default=None)
     parser.add_argument("--test-ds-split", type=str, default="test_sft")
+    parser.add_argument("--batch-size", type=int, default=4)
+    parser.add_argument("--eval-workers", type=int, default=4)
     parser.add_argument("--avg-similarity-threshold", type=float, default=90.0)
     parser.add_argument("--avg-precision-threshold", type=float, default=90.0)
     

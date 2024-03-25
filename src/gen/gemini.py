@@ -1,7 +1,7 @@
 import json
 import google.generativeai as genai
 
-def call_gemini(prompt="", api_key=None, generation_config=None, safety_settings=None):
+async def call_gemini(prompt="", api_key=None, generation_config=None, safety_settings=None):
     genai.configure(api_key=api_key)
     
     if generation_config is None:
@@ -36,5 +36,5 @@ def call_gemini(prompt="", api_key=None, generation_config=None, safety_settings
                                 generation_config=generation_config,
                                 safety_settings=safety_settings)
     prompt_parts = [prompt]
-    response = model.generate_content(prompt_parts)
+    response = await model.generate_content_async(prompt_parts)
     return response.text
