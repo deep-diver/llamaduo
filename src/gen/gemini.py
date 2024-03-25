@@ -1,8 +1,8 @@
 import json
 import google.generativeai as genai
 
-def call_gemini(prompt="", gemini_api_key=None, generation_config=None, safety_settings=None):
-    genai.configure(api_key=gemini_api_key)
+def call_gemini(prompt="", api_key=None, generation_config=None, safety_settings=None):
+    genai.configure(api_key=api_key)
     
     if generation_config is None:
         generation_config = {
