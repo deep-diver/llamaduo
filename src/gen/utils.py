@@ -1,7 +1,10 @@
 import json
 from gen.gemini import call_gemini
 
-def find_json_snippet(raw_snippet):
+def _find_json_snippet(raw_snippet):
+	"""
+	_find_json_snippet tries to find JSON snippets in a given raw_snippet string
+	"""
 	json_parsed_string = None
 
 	json_start_index = raw_snippet.find('{')
@@ -18,31 +21,42 @@ def find_json_snippet(raw_snippet):
 
 	return json_parsed_string
 
-def parse_first_json_snippet(snippet):
+def _parse_first_json_snippet(snippet):
+	"""
+	_parse_first_json_snippet tries to find JSON snippet and parse into json object
+	"""
 	json_parsed_string = None
 
 	if isinstance(snippet, list):
 		for snippet_piece in snippet:
 			try:
-				json_parsed_string = find_json_snippet(snippet_piece)
+				json_parsed_string = _find_json_snippet(snippet_piece)
 				return json_parsed_string
 			except:
 				pass
 	else:
 		try:
-			json_parsed_string = find_json_snippet(snippet)
+			json_parsed_string = _find_json_snippet(snippet)
 		except Exception as e:
-			raise ValueError()
+			raise ValueError(str(e))
 
 	return json_parsed_string
 
-def required_keys_exist(assessment_json):
+def _required_keys_exist(assessment_json):
+    """
+    _required_keys_exist checks if required keys exist in the given assessment_json
+    """    
     keys_to_check = set(["precision_assessment", "precision_assessment"])
     qualified = keys_to_check.issubset(set(assessment_json.keys()))
     if qualified is False:
         raise ValueError("missing required keys")
 
 def call_service_llm(prompt, gemini_api_key, retry_num=3):
+    """
+    call_service_llm makes API call to service language model (currently Gemini)
+    it makes sure the generated output by the service language model in a certain JSON format
+    if no valid JSON format found, call_service_llm retries up to the number of retry_num
+    """
     assessment_json = None
     cur_retry = 0
 
@@ -53,8 +67,8 @@ def call_service_llm(prompt, gemini_api_key, retry_num=3):
                 api_key=gemini_api_key
             )
 
-            assessment_json = parse_first_json_snippet(assessment)
-            required_keys_exist(assessment_json)
+            assessment_json = _parse_first_json_snippet(assessment)
+            _required_keys_exist(assessment_json)
         except Exception as e:
             cur_retry = cur_retry + 1
             print(f"......retry [{e}]")
