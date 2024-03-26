@@ -49,8 +49,6 @@ if __name__ == "__main__":
                         help="Path to the prompts TOML configuration file.")
     parser.add_argument("--gemini-api-key", type=str, default=None,
                         help="Gemini API key for authentication.")
-    parser.add_argument("--gemini-model-name", type=str, default="gemini-1.0-pro",
-                        help="Gemini model name to use for evaluation")
     parser.add_argument("--steps", type=str, nargs="+",
                         help="List of pipeline steps to run in the choices of [fine-tune, eval, synth-gen, deploy].")
     
