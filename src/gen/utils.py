@@ -53,7 +53,7 @@ def _required_keys_exist(assessment_json):
 
     return assessment_json
 
-async def call_service_llm(prompt, gemini_api_key, retry_num=3):
+async def call_service_llm(prompt, retry_num=3):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -66,7 +66,6 @@ async def call_service_llm(prompt, gemini_api_key, retry_num=3):
         try:
             assessment = await call_gemini(
                 prompt=prompt,
-                api_key=gemini_api_key
             )
 
             assessment_json = _parse_first_json_snippet(assessment)

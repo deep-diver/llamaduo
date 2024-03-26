@@ -1,9 +1,7 @@
 import json
 import google.generativeai as genai
 
-async def call_gemini(prompt="", api_key=None, generation_config=None, safety_settings=None):
-    genai.configure(api_key=api_key)
-    
+async def call_gemini(prompt="", generation_config=None, safety_settings=None):
     if generation_config is None:
         generation_config = {
           "temperature": 0.9,

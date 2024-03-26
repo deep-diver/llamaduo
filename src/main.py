@@ -1,17 +1,22 @@
 import asyncio
 import argparse
 
+import google.generativeai as genai
+
 from pipeline.eval import eval_on_records
 from utils import validate_steps
 
 async def main(args):
+    if args.gemini_api_key is not None:
+        genai.configure(api_key=args.gemini_api_key)
+    
     if args.load_in_8bit is True \
         and args.load_in_4bit is True:
         raise ValueError("both load_in_8bit and load_in_4bit are set. "
                          "only one of them should be set at a time")
     
     valid, input_steps = validate_steps(args.steps)
-    if valid:
+    if valid is True:
         if "fine-tuning" in input_steps:
             pass
         
@@ -24,7 +29,7 @@ async def main(args):
                 args.data_preprocess_bs, args.inference_bs, args.repeat,
                 args.ft_model_config_path, args.prompt_tmpl_path,
                 args.eval_workers, args.avg_similarity_threshold, 
-                args.avg_precision_threshold, args.gemini_api_key
+                args.avg_precision_threshold, 
             )
             print(qualification_results)
         

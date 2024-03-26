@@ -58,7 +58,7 @@ def _get_test_dataset(dataset_id, split, tokenizer, batch_size):
         __batch_process, batched=True, batch_size=batch_size
     )
 
-async def _gen_eval_on_records(eval_prompts, gemini_api_key, eval_workers):
+async def _gen_eval_on_records(eval_prompts, eval_workers):
     """
     _gen_eval_on_records simultaneously generates evaluations on the eval_prompts
     """
@@ -67,7 +67,7 @@ async def _gen_eval_on_records(eval_prompts, gemini_api_key, eval_workers):
         partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
         tasks = [
             asyncio.create_task(
-                call_service_llm(eval_prompt, gemini_api_key, retry_num=5)
+                call_service_llm(eval_prompt, retry_num=5)
             ) for eval_prompt in partial_eval_prompts
         ]
         results = await asyncio.gather(*tasks)
@@ -75,7 +75,7 @@ async def _gen_eval_on_records(eval_prompts, gemini_api_key, eval_workers):
         
     return assessments
 
-async def _eval_on_records(model, tokenizer, batch_data, eval_prompt_tmpl, gemini_api_key, eval_workers):
+async def _eval_on_records(model, tokenizer, batch_data, eval_prompt_tmpl, eval_workers):
     """
     _eval_on_single_record:
     1. generates output on a given instruction from data by local language model
@@ -84,7 +84,7 @@ async def _eval_on_records(model, tokenizer, batch_data, eval_prompt_tmpl, gemin
     """
     lm_responses = gen_model_outputs(model, tokenizer, batch_data)
     eval_prompts = _construct_eval_prompts(batch_data, lm_responses, eval_prompt_tmpl)
-    assessments = await _gen_eval_on_records(eval_prompts, gemini_api_key, eval_workers)
+    assessments = await _gen_eval_on_records(eval_prompts, eval_workers)
     return assessments
     
 async def eval_on_records(
@@ -93,7 +93,7 @@ async def eval_on_records(
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
     config_path, eval_prompt_tmpl_path,
-    eval_workers, avg_similarity_threshold, avg_precision_threshold, gemini_api_key
+    eval_workers, avg_similarity_threshold, avg_precision_threshold
 ):
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
@@ -110,7 +110,7 @@ async def eval_on_records(
         for repeat_idx in range(repeat):
             batch_data = ds[idx:idx+inference_bs]
             assessments = await _eval_on_records(
-                model, tokenizer, batch_data, eval_prompt_tmpl, gemini_api_key, eval_workers
+                model, tokenizer, batch_data, eval_prompt_tmpl, eval_workers
             )
             
             for partial_idx, assessment in enumerate(assessments):
