@@ -27,9 +27,12 @@ DEFAULT_SAFETY_SETTINGS = [
     },
 ]
 
-async def call_gemini(prompt="", generation_config=None, safety_settings=None):
-    model = genai.GenerativeModel(model_name="gemini-1.0-pro",
+def get_model(model_name, generation_config=None, safety_settings=None):
+    model = genai.GenerativeModel(model_name=model_name,
                                   generation_config=DEFAULT_GEN_CONFIG if generation_config is None else generation_config,
                                   safety_settings=DEFAULT_SAFETY_SETTINGS if safety_settings is None else safety_settings)
+    return model
+
+async def generate_async(model, prompt="", generation_config=None, safety_settings=None):
     response = await model.generate_content_async([prompt])
     return response.text

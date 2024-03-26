@@ -29,8 +29,8 @@ async def main(args):
                 args.test_ds_id, args.test_ds_split, 
                 args.data_preprocess_bs, args.inference_bs, args.repeat,
                 args.ft_model_config_path, args.prompt_tmpl_path,
-                args.eval_workers, args.avg_similarity_threshold, 
-                args.avg_precision_threshold, 
+                args.service_model_name, args.eval_workers,
+                args.avg_similarity_threshold, args.avg_precision_threshold, 
             )
             print(qualification_results)
         
@@ -49,6 +49,8 @@ if __name__ == "__main__":
                         help="Path to the prompts TOML configuration file.")
     parser.add_argument("--gemini-api-key", type=str, default=None,
                         help="Gemini API key for authentication.")
+    parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
+                        help="Which service LLM to use for evaluation of the local fine-tuned model")
     parser.add_argument("--steps", type=str, nargs="+",
                         help="List of pipeline steps to run in the choices of [fine-tune, eval, synth-gen, deploy].")
     

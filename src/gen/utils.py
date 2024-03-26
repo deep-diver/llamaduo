@@ -1,5 +1,5 @@
 import json
-from gen.gemini import call_gemini
+from .gemini import generate_async
 
 def _find_json_snippet(raw_snippet):
 	"""
@@ -53,7 +53,7 @@ def _required_keys_exist(assessment_json):
 
     return assessment_json
 
-async def call_service_llm(prompt, retry_num=3):
+async def call_service_llm(eval_model, prompt, retry_num=3):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -64,7 +64,8 @@ async def call_service_llm(prompt, retry_num=3):
 
     while assessment_json is None and cur_retry < retry_num:
         try:
-            assessment = await call_gemini(
+            assessment = await generate_async(
+                eval_model,
                 prompt=prompt,
             )
 
