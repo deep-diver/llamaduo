@@ -1,9 +1,10 @@
+import os
 import asyncio
 import argparse
 
 import google.generativeai as genai
 
-from pipeline.eval import eval_on_records
+from src.pipeline.eval import eval_on_records
 from utils import validate_steps
 
 async def main(args):
@@ -43,17 +44,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LLMOps pipeline CLI")
     
     # global
-    parser.add_argument("--prompt-tmpl-path", type=str, default="config/prompts.toml",
+    parser.add_argument("--prompt-tmpl-path", type=str, 
+                        default=os.path.abspath("config/prompts.toml"),
                         help="Path to the prompts TOML configuration file.")
     parser.add_argument("--gemini-api-key", type=str, default=None,
                         help="Gemini API key for authentication.")
+    parser.add_argument("--gemini-model-name", type=str, default="gemini-1.0-pro",
+                        help="Gemini model name to use for evaluation")
     parser.add_argument("--steps", type=str, nargs="+",
                         help="List of pipeline steps to run in the choices of [fine-tune, eval, synth-gen, deploy].")
     
     # common
     parser.add_argument("--ft-model-id", type=str, default=None,
                         help="ID of the fine-tuned model to use.")
-    parser.add_argument("--ft-model-config-path", type=str, default="config/sample_config.yaml",
+    parser.add_argument("--ft-model-config-path", type=str, 
+                        default=os.path.abspath("config/sample_config.yaml"),
                         help="Path to the fine-tuned model configuration file.")
     parser.add_argument("--load-in-8bit", action="store_true",
                         help="Load the model weights in 8-bit quantization.")
