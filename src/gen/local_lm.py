@@ -13,10 +13,8 @@ def get_model(model_id, load_in_8bit, load_in_4bit, model_args, data_args):
     model_args -- ModelArguments obtained from H4ArgumentParser
     data_args -- DataArguments obtained from H4ArgumentParser
     """
-    quantization_config = BitsAndBytesConfig(load_in_8bit=load_in_8bit, load_in_4bit=load_in_4bit)
-
     tokenizer = get_tokenizer(model_args, data_args)
-    tokenizer.padding_side = 'left'
+    quantization_config = BitsAndBytesConfig(load_in_8bit=load_in_8bit, load_in_4bit=load_in_4bit)
     
     model = AutoModelForCausalLM.from_pretrained(
         model_id, torch_dtype=torch.bfloat16,
