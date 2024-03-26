@@ -98,8 +98,8 @@ async def eval_on_records(
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
     """
-    model_args, data_args, _ = get_args(config_path)
-    tokenizer, model = get_model(model_id, load_in_8bit, load_in_4bit, model_args, data_args)
+    model_args, data_args, sft_args = get_args(config_path)
+    tokenizer, model = get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=model_id)
     
     total_similarity_scores = 0
     total_precision_scores = 0

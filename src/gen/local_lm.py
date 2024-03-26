@@ -5,7 +5,7 @@ from transformers import (
 )
 from alignment.model_utils import get_tokenizer
 
-def get_model(model_id, load_in_8bit, load_in_4bit, model_args, data_args):
+def get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=None):
     """
     get_model instantiates and return fine-tuned language model and tokenzier.
 
@@ -17,8 +17,9 @@ def get_model(model_id, load_in_8bit, load_in_4bit, model_args, data_args):
     quantization_config = BitsAndBytesConfig(load_in_8bit=load_in_8bit, load_in_4bit=load_in_4bit)
     
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, torch_dtype=torch.bfloat16,
-        quantization_config=quantization_config, device_map="auto"
+        sft_args.hub_model_id if model_id is None else model_id, 
+        quantization_config=quantization_config, 
+        torch_dtype=torch.bfloat16, device_map="auto"
     )
 
     return tokenizer, model
