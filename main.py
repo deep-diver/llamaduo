@@ -21,6 +21,9 @@ async def main(args):
         if "fine-tuning" in input_steps:
             pass
         
+        if "batch-infer" in input_steps:
+            pass
+
         if "eval" in input_steps:
             print("processing eval step...")
             qualification_results = await eval_on_records(
@@ -52,7 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
     parser.add_argument("--steps", type=str, nargs="+",
-                        help="List of pipeline steps to run in the choices of [fine-tune, eval, synth-gen, deploy].")
+                        help="List of pipeline steps to run in the choices of [fine-tune, batch-infer, eval, synth-gen, deploy].")
     
     # common
     parser.add_argument("--ft-model-id", type=str, default=None,
