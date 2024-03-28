@@ -4,6 +4,7 @@ import argparse
 
 import google.generativeai as genai
 
+from src.pipeline.batch_inference import gen_local_lm_response
 from src.pipeline.eval import eval_on_records
 from utils import validate_steps
 
@@ -22,6 +23,11 @@ async def main(args):
             pass
         
         if "batch-infer" in input_steps:
+            gen_local_lm_response(
+                args.ft_model_id, args.load_in_8bit, args.load_in_4bit,
+                args.data_preprocess_bs, args.inference_bs, args.repeat,
+                args.ft_model_config_path, 
+            )
             pass
 
         if "eval" in input_steps:
