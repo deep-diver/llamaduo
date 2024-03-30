@@ -28,9 +28,9 @@ def gen_local_lm_responses(
     data_preprocess_bs, inference_bs, repeat,
     config_path, 
 ):
-    ds = _get_test_dataset(test_dataset_id, test_dataset_split, tokenizer, data_preprocess_bs)
     model_args, data_args, sft_args = get_args(config_path)
     tokenizer, model = get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=model_id)
+    ds = _get_test_dataset(test_dataset_id, test_dataset_split, tokenizer, data_preprocess_bs)
 
     results = {"instructions": [], "target_responses": [], "candidate_responses": []}
 
