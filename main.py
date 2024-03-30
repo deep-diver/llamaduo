@@ -94,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
     parser.add_argument("--hf-token", type=str, default=os.getenv("HF_TOKEN"))
-    parser.add_argument("--step", type=str, nargs=None,
+    parser.add_argument("--step", type=str, default=None,
                         help="step to run in the choices of [fine-tune, batch-infer, eval, synth-gen, deploy].")
     
     # batch inference
