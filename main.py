@@ -117,6 +117,7 @@ if __name__ == "__main__":
                         help="Batch size for model inference.")
     parser.add_argument("--repeat", type=int, default=4,
                         help="Number of times to repeat the evaluation for each data sample")
+    parser.add_argument("--push-lm-responses-to-hf-hub", action="store_true")
     parser.add_argument("--lm-response-dataset-id", type=str, default=None)
     parser.add_argument("--lm-response-append", action="store_true", default=True)
 
