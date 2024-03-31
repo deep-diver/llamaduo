@@ -53,7 +53,7 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
             ) for eval_prompt in partial_eval_prompts
         ]
         results = await asyncio.gather(*tasks)
-        results.sort()
+        results = sorted(results, key=lambda item: item[0])
         results = [result[1] for result in results]
         assessments.extend(results)
         
