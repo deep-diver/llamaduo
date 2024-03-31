@@ -17,7 +17,7 @@ def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     prompts = toml.load(eval_prompt_tmpl_path)
     return prompts['eval']['prompt']
 
-def _get_lm_response_dataset(dataset_id, eval_prompt_tmpl, batch_size):
+def _get_lm_response_dataset(dataset_id, split,, eval_prompt_tmpl, batch_size):
     """
     _get_test_dataset returns the target test dataset
     """
@@ -36,7 +36,7 @@ def _get_lm_response_dataset(dataset_id, eval_prompt_tmpl, batch_size):
         batch["eval_prompts"] = eval_prompts
         return batch
         
-    return load_dataset(dataset_id, split='train').map(
+    return load_dataset(dataset_id, split=split).map(
         __batch_process, batched=True, batch_size=batch_size
     )
 
@@ -60,8 +60,8 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
     return assessments
     
 async def eval_on_records(
-    lm_response_dataset_id, eval_prompt_tmpl_path,
-    service_model_name, eval_workers, 
+    lm_response_dataset_id, lm_response_dataset_split,
+    eval_prompt_tmpl_path, service_model_name, eval_workers, 
     avg_similarity_threshold, avg_precision_threshold,
     batch_size
 ):
@@ -76,7 +76,7 @@ async def eval_on_records(
         
     eval_model = get_service_model(service_model_name)
     eval_prompt_tmpl = _get_eval_prompt_tmpl(eval_prompt_tmpl_path)
-    lm_response_ds = _get_lm_response_dataset(lm_response_dataset_id, eval_prompt_tmpl, batch_size=batch_size)
+    lm_response_ds = _get_lm_response_dataset(lm_response_dataset_id, lm_response_dataset_split, eval_prompt_tmpl, batch_size=batch_size)
 
     for idx in range(0, len(lm_response_ds), eval_workers):
         batch_data = lm_response_ds[idx:idx+eval_workers]

@@ -26,7 +26,7 @@ def gen_local_lm_responses(
     model_id, load_in_8bit, load_in_4bit,
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
-    config_path, 
+    lm_response_dataset_split, config_path, 
 ):
     model_args, data_args, sft_args = get_args(config_path)
     tokenizer, model = get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=model_id)
@@ -47,4 +47,6 @@ def gen_local_lm_responses(
                 results["target_responses"].append(target_response)
                 results["candidate_responses"].append(lm_response)
 
-    return datasets.Dataset.from_dict(results)
+    return datasets.Dataset.from_dict(
+        results, split={lm_response_dataset_split: slice(0, 100)}
+    )

@@ -8,27 +8,28 @@ from src.pipeline.batch_inference import gen_local_lm_responses
 from src.pipeline.eval import eval_on_records
 from src.pipeline.utils import push_to_hf_hub
 
-def batch_inference(args):
-    hf_hub = False
-
-    if args.load_in_8bit is True \
-        and args.load_in_4bit is True:
-        raise ValueError("both load_in_8bit and load_in_4bit are set. "
-                            "only one of them should be set at a time")
-
+def _push_to_hf_hub_enabled(args):
     if args.push_lm_responses_to_hf_hub is True:
         if args.lm_response_dataset_id is None \
             or args.hf_token is None:
             raise ValueError("push_to_hub was set to True, but either or all of "
                             "lm_response_dataset_id and hf_token are set to None")
         else:
-            hf_hub = True
+            return True    
+
+def batch_inference(args):
+    hf_hub = _push_to_hf_hub_enabled(args)
+
+    if args.load_in_8bit is True \
+        and args.load_in_4bit is True:
+        raise ValueError("both load_in_8bit and load_in_4bit are set. "
+                            "only one of them should be set at a time")
 
     local_lm_responses = gen_local_lm_responses(
         args.ft_model_id, args.load_in_8bit, args.load_in_4bit,
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
-        args.ft_model_config_path, 
+        args.lm_response_dataset_split, args.ft_model_config_path, 
     )
 
     if hf_hub is True:
@@ -40,18 +41,10 @@ def batch_inference(args):
     return local_lm_responses
 
 async def evaluation(args):
-    hf_hub = False
-
-    if args.push_eval_to_hf_hub is True:
-        if args.eval_dataset_id is None \
-            or args.hf_token is None:
-            raise ValueError("push_to_hub was set to True, but either or all of "
-                             "eval_dataset_id and hf_token are set to None")
-        else:
-            hf_hub = True
+    hf_hub = _push_to_hf_hub_enabled(args)
 
     eval_results = await eval_on_records(
-        args.lm_response_dataset_id,
+        args.lm_response_dataset_id, args.lm_response_dataset_split,
         args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
         args.avg_similarity_threshold, args.avg_precision_threshold,
         args.eval_data_preprocess_bs
@@ -131,6 +124,8 @@ if __name__ == "__main__":
                         help="Whether to push generated responses to Hugging Face Dataset repository(Hub)")
     parser.add_argument("--lm-response-dataset-id", type=str, default=None,
                         help="Hugging Face Dataset repository ID")
+    parser.add_argument("--lm-response-dataset-split", type=str, default="batch_infer",
+                        help="Split of the lm response dataset to use for saving or retreiving.")
     parser.add_argument("--lm-response-append", action="store_true", default=True,
                         help="Wheter to overwrite or append on the existing Hugging Face Dataset repository")
 
