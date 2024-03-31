@@ -117,9 +117,12 @@ if __name__ == "__main__":
                         help="Batch size for model inference.")
     parser.add_argument("--repeat", type=int, default=4,
                         help="Number of times to repeat the evaluation for each data sample")
-    parser.add_argument("--push-lm-responses-to-hf-hub", action="store_true")
-    parser.add_argument("--lm-response-dataset-id", type=str, default=None)
-    parser.add_argument("--lm-response-append", action="store_true", default=True)
+    parser.add_argument("--push-lm-responses-to-hf-hub", action="store_true",
+                        help="Whether to push generated responses to Hugging Face Dataset repository(Hub)")
+    parser.add_argument("--lm-response-dataset-id", type=str, default=None,
+                        help="Hugging Face Dataset repository ID")
+    parser.add_argument("--lm-response-append", action="store_true", default=True,
+                        help="Wheter to overwrite or append on the existing Hugging Face Dataset repository")
 
     # eval
     parser.add_argument("--eval-data-preprocess-bs", type=int, default=16)
@@ -129,7 +132,10 @@ if __name__ == "__main__":
                         help="Average similarity threshold for passing evaluation.")
     parser.add_argument("--avg-precision-threshold", type=float, default=90.0,
                         help="Average precision threshold for passing evaluation.")
-    parser.add_argument("--eval-dataset-id", type=str, default=None)
+    parser.add_argument("--push-eval-to-hf-hub", action="store_true",
+                        help="Whether to push generated evaluation to Hugging Face Dataset repository(Hub)")
+    parser.add_argument("--eval-dataset-id", type=str, default=None,
+                        help="Hugging Face Dataset repository ID")
     args = parser.parse_args()    
     
     args = parser.parse_args()
