@@ -9,10 +9,20 @@ from src.pipeline.eval import eval_on_records
 from src.pipeline.utils import push_to_hf_hub
 
 def batch_inference(args):
+    hf_hub = False
+
     if args.load_in_8bit is True \
         and args.load_in_4bit is True:
         raise ValueError("both load_in_8bit and load_in_4bit are set. "
                             "only one of them should be set at a time")
+
+    if args.push_lm_responses_to_hf_hub is True:
+        if args.lm_response_dataset_id is None \
+            or args.hf_token is None:
+            raise ValueError("push_to_hub was set to True, but either or all of "
+                            "lm_response_dataset_id and hf_token are set to None")
+        else:
+            hf_hub = True
 
     local_lm_responses = gen_local_lm_responses(
         args.ft_model_id, args.load_in_8bit, args.load_in_4bit,
@@ -21,26 +31,16 @@ def batch_inference(args):
         args.ft_model_config_path, 
     )
 
-    if args.push_lm_responses_to_hf_hub is True:
-        if args.lm_response_dataset_id is None \
-            or args.hf_token is None:
-            raise ValueError("push_to_hub was set to True, but either or all of "
-                            "lm_response_dataset_id and hf_token are set to None")
-        else:
-            push_to_hf_hub(
-                args.lm_response_dataset_id, local_lm_responses,
-                args.hf_token, args.lm_response_append
-            )
+    if hf_hub is True:
+        push_to_hf_hub(
+            args.lm_response_dataset_id, local_lm_responses,
+            args.hf_token, args.lm_response_append
+        )
 
     return local_lm_responses
 
 async def evaluation(args):
-    eval_results = await eval_on_records(
-        args.lm_response_dataset_id,
-        args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
-        args.avg_similarity_threshold, args.avg_precision_threshold,
-        args.eval_data_preprocess_bs
-    )
+    hf_hub = False
 
     if args.push_eval_to_hf_hub is True:
         if args.eval_dataset_id is None \
@@ -48,9 +48,19 @@ async def evaluation(args):
             raise ValueError("push_to_hub was set to True, but either or all of "
                              "eval_dataset_id and hf_token are set to None")
         else:
-            push_to_hf_hub(
-                args.eval_dataset_id, eval_results["ds_with_scores"], args.hf_token, False
-            )
+            hf_hub = True
+
+    eval_results = await eval_on_records(
+        args.lm_response_dataset_id,
+        args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
+        args.avg_similarity_threshold, args.avg_precision_threshold,
+        args.eval_data_preprocess_bs
+    )
+
+    if hf_hub is True:
+        push_to_hf_hub(
+            args.eval_dataset_id, eval_results["ds_with_scores"], args.hf_token, False
+        )
 
     return eval_results
 
