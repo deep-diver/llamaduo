@@ -33,6 +33,8 @@ def batch_inference(args):
     )
 
     if hf_hub is True:
+        # dataset with columns of 
+        # (instructions, target_response, candidate_response) will recorded
         push_to_hf_hub(
             args.lm_response_dataset_id, 
             args.lm_response_dataset_split, local_lm_responses,
@@ -52,6 +54,8 @@ async def evaluation(args):
     )
 
     if hf_hub is True:
+        # dataset with columns of (instructions, target_response, candidate_response
+        # eval_prompts, similarity_scores, precision_scores) will be recorded
         push_to_hf_hub(
             args.eval_dataset_id, 
             args.eval_dataset_split, eval_results["ds_with_scores"], 
