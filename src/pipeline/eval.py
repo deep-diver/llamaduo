@@ -2,7 +2,7 @@ import toml
 import time
 import asyncio
 from string import Template
-from datasets import load_dataset
+from datasets import load_dataset, DatasetDict
 
 from ..gen.gemini import get_model as get_service_model
 from ..gen.local_lm import get_model, gen_model_outputs
@@ -63,7 +63,7 @@ async def eval_on_records(
     lm_response_dataset_id, lm_response_dataset_split,
     eval_prompt_tmpl_path, service_model_name, eval_workers, 
     avg_similarity_threshold, avg_precision_threshold,
-    batch_size
+    batch_size, eval_dataset_split
 ):
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
@@ -94,6 +94,9 @@ async def eval_on_records(
 
     ds_with_scores = lm_response_ds.add_column("similarity_scores", similarity_scores)
     ds_with_scores = ds_with_scores.add_column("precision_scores", precision_scores)
+    ds_with_scores = DatasetDict(
+        {eval_dataset_split: ds_with_scores}
+    )
 
     avg_similarity_scores = total_similarity_score / len(lm_response_ds)
     avg_precision_scores = total_precision_score / len(lm_response_ds)
@@ -102,6 +105,6 @@ async def eval_on_records(
     return {
         "qualification": qualification,
         "avg_similarity_scores": avg_similarity_scores,
-        "avg_precision_scores": avg_precision_scores,        
+        "avg_precision_scores": avg_precision_scores,
         "ds_with_scores": ds_with_scores
     }

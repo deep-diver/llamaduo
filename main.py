@@ -34,7 +34,8 @@ def batch_inference(args):
 
     if hf_hub is True:
         push_to_hf_hub(
-            args.lm_response_dataset_id, local_lm_responses,
+            args.lm_response_dataset_id, 
+            args.lm_response_dataset_split, local_lm_responses,
             args.hf_token, args.lm_response_append
         )
 
@@ -47,12 +48,14 @@ async def evaluation(args):
         args.lm_response_dataset_id, args.lm_response_dataset_split,
         args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
         args.avg_similarity_threshold, args.avg_precision_threshold,
-        args.eval_data_preprocess_bs
+        args.eval_data_preprocess_bs, args.eval_dataset_split
     )
 
     if hf_hub is True:
         push_to_hf_hub(
-            args.eval_dataset_id, eval_results["ds_with_scores"], args.hf_token, False
+            args.eval_dataset_id, 
+            args.eval_dataset_split, eval_results["ds_with_scores"], 
+            args.hf_token, False
         )
 
     return eval_results
@@ -141,6 +144,8 @@ if __name__ == "__main__":
                         help="Whether to push generated evaluation to Hugging Face Dataset repository(Hub)")
     parser.add_argument("--eval-dataset-id", type=str, default=None,
                         help="Hugging Face Dataset repository ID")
+    parser.add_argument("--eval-dataset-split", type=str, default="eval",
+                        help="Split of the lm evak dataset to use for saving.")    
     args = parser.parse_args()    
     
     args = parser.parse_args()
