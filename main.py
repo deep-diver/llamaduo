@@ -18,6 +18,12 @@ def _push_to_hf_hub_enabled(args):
             return True    
 
 def batch_inference(args):
+    """
+    batch_inference generates outputs on given instruction.
+    its main job is to call gen_local_lm_responses() function.
+    Additionally it goes through arguments' validation, and 
+    it pushes generated outputs to the specified Hugging Face Dataset repo.
+    """
     hf_hub = _push_to_hf_hub_enabled(args)
 
     if args.load_in_8bit is True \
@@ -44,6 +50,12 @@ def batch_inference(args):
     return local_lm_responses
 
 async def evaluation(args):
+    """
+    evaluation generates evaluations on given pairs of target and candidate responses.
+    its main job is to call eval_on_records() function.
+    Additionally it goes through arguments' validation, and 
+    it pushes generated evaluations to the specified Hugging Face Dataset repo.
+    """    
     hf_hub = _push_to_hf_hub_enabled(args)
 
     eval_results = await eval_on_records(
