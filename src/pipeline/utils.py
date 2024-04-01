@@ -21,9 +21,14 @@ def get_args(yaml_file_path):
     return configs
 
 def push_to_hf_hub(dataset_id, split, ds, hf_token, append=True):
-    create_repo(dataset_id, repo_type="dataset", exist_ok=True, token=hf_token)
-    
-    if append:
+    exist = False
+
+    try:
+        create_repo(dataset_id, repo_type="dataset", token=hf_token)
+    except HfHubHTTPError as e:
+        exist = True
+      
+    if exist and append:
         existing_ds = load_dataset(dataset_id)
         if split in existing_ds.keys():
             ds = concatenate_datasets([existing_ds[split], ds])
