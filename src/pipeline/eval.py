@@ -17,7 +17,7 @@ def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     prompts = toml.load(eval_prompt_tmpl_path)
     return prompts['eval']['prompt']
 
-def _get_lm_response_dataset(dataset_id, split,, eval_prompt_tmpl, batch_size):
+def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
     """
     _get_test_dataset returns the target test dataset
     """
