@@ -8,14 +8,13 @@ from src.pipeline.batch_inference import gen_local_lm_responses
 from src.pipeline.eval import eval_on_records
 from src.pipeline.utils import push_to_hf_hub
 
-def _push_to_hf_hub_enabled(args):
-    if args.push_lm_responses_to_hf_hub is True:
-        if args.lm_response_dataset_id is None \
-            or args.hf_token is None:
+def _push_to_hf_hub_enabled(push_enabled, dataset_id, split, hf_token):
+    if push_enabled is True:
+        if dataset_id is None or split is None or hf_token is None:
             raise ValueError("push_to_hub was set to True, but either or all of "
                             "lm_response_dataset_id and hf_token are set to None")
         else:
-            return True    
+            return True
 
 def batch_inference(args):
     """
@@ -24,7 +23,10 @@ def batch_inference(args):
     Additionally it goes through arguments' validation, and 
     it pushes generated outputs to the specified Hugging Face Dataset repo.
     """
-    hf_hub = _push_to_hf_hub_enabled(args)
+    hf_hub = _push_to_hf_hub_enabled(
+        args.push_lm_responses_to_hf_hub,
+        args.lm_response_ds_id, args.lm_response_ds_split, args.hf_token
+    )
 
     if args.load_in_8bit is True \
         and args.load_in_4bit is True:
@@ -35,15 +37,15 @@ def batch_inference(args):
         args.ft_model_id, args.load_in_8bit, args.load_in_4bit,
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
-        args.lm_response_dataset_split, args.ft_model_config_path, 
+        args.lm_response_ds_split, args.ft_model_config_path, 
     )
 
     if hf_hub is True:
         # dataset with columns of 
         # (instructions, target_response, candidate_response) will recorded
         push_to_hf_hub(
-            args.lm_response_dataset_id, 
-            args.lm_response_dataset_split, local_lm_responses,
+            args.lm_response_ds_id, args.lm_response_ds_split, 
+            local_lm_responses, 
             args.hf_token, args.lm_response_append
         )
 
@@ -56,21 +58,23 @@ async def evaluation(args):
     Additionally it goes through arguments' validation, and 
     it pushes generated evaluations to the specified Hugging Face Dataset repo.
     """    
-    hf_hub = _push_to_hf_hub_enabled(args)
-
+    hf_hub = _push_to_hf_hub_enabled(
+        args.push_eval_to_hf_hub,
+        args.eval_ds_id, args.eval_ds_split, args.hf_token
+    )
     eval_results = await eval_on_records(
-        args.lm_response_dataset_id, args.lm_response_dataset_split,
+        args.lm_response_ds_id, args.lm_response_ds_split,
         args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
         args.avg_similarity_threshold, args.avg_precision_threshold,
-        args.eval_data_preprocess_bs, args.eval_dataset_split
+        args.eval_data_preprocess_bs, args.eval_ds_split
     )
 
     if hf_hub is True:
         # dataset with columns of (instructions, target_response, candidate_response
         # eval_prompts, similarity_scores, precision_scores) will be recorded
         push_to_hf_hub(
-            args.eval_dataset_id, 
-            args.eval_dataset_split, eval_results["ds_with_scores"], 
+            args.eval_ds_id, args.eval_ds_split, 
+            eval_results["ds_with_scores"], 
             args.hf_token, False
         )
 
@@ -141,9 +145,9 @@ if __name__ == "__main__":
                         help="Number of times to repeat the evaluation for each data sample")
     parser.add_argument("--push-lm-responses-to-hf-hub", action="store_true",
                         help="Whether to push generated responses to Hugging Face Dataset repository(Hub)")
-    parser.add_argument("--lm-response-dataset-id", type=str, default=None,
+    parser.add_argument("--lm-response-ds-id", type=str, default=None,
                         help="Hugging Face Dataset repository ID")
-    parser.add_argument("--lm-response-dataset-split", type=str, default="batch_infer",
+    parser.add_argument("--lm-response-ds-split", type=str, default="batch_infer",
                         help="Split of the lm response dataset to use for saving or retreiving.")
     parser.add_argument("--lm-response-append", action="store_true", default=True,
                         help="Wheter to overwrite or append on the existing Hugging Face Dataset repository")
@@ -158,9 +162,9 @@ if __name__ == "__main__":
                         help="Average precision threshold for passing evaluation.")
     parser.add_argument("--push-eval-to-hf-hub", action="store_true",
                         help="Whether to push generated evaluation to Hugging Face Dataset repository(Hub)")
-    parser.add_argument("--eval-dataset-id", type=str, default=None,
+    parser.add_argument("--eval-ds-id", type=str, default=None,
                         help="Hugging Face Dataset repository ID")
-    parser.add_argument("--eval-dataset-split", type=str, default="eval",
+    parser.add_argument("--eval-ds-split", type=str, default="eval",
                         help="Split of the lm evak dataset to use for saving.")    
     args = parser.parse_args()    
     

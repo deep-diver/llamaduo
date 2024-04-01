@@ -48,5 +48,5 @@ def gen_local_lm_responses(
                 results["candidate_responses"].append(lm_response)
 
     return datasets.Dataset.from_dict(
-        results, split={lm_response_dataset_split: slice(0, 100)}
+        results, split=lm_response_dataset_split
     )
