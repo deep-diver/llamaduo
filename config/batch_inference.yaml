@@ -1,4 +1,5 @@
 ft_model_id: sayakpaul/gemma-2b-sft-qlora-no-robots
+ft_model_revision: main
 ft_model_config_path: config/sample_config.yaml
 load_in_8bit: true
 load_in_4bit: false

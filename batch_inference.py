@@ -24,7 +24,8 @@ def batch_inference(args):
                             "only one of them should be set at a time")
 
     local_lm_responses = gen_local_lm_responses(
-        args.ft_model_id, args.load_in_8bit, args.load_in_4bit,
+        args.ft_model_id, args.ft_model_revision,
+        args.load_in_8bit, args.load_in_4bit,
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
         args.lm_response_ds_split, args.ft_model_config_path, 
@@ -55,6 +56,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--ft-model-id", type=str, default=None,
                         help="ID of the fine-tuned model to use.")
+    parser.add_argument("--ft-model-revision", type=str, default="main",
+                        help="revision(branch) of the fine-tuned model to use.")
     parser.add_argument("--ft-model-config-path", type=str, 
                         default=os.path.abspath("config/sample_config.yaml"),
                         help="Path to the fine-tuned model configuration file.")

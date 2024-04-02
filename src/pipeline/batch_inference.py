@@ -23,13 +23,16 @@ def _get_test_dataset(dataset_id, split, tokenizer, batch_size):
     )
 
 def gen_local_lm_responses(
-    model_id, load_in_8bit, load_in_4bit,
+    model_id, model_revision, 
+    load_in_8bit, load_in_4bit,
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
     lm_response_dataset_split, config_path, 
 ):
     model_args, data_args, sft_args = get_args(config_path)
-    tokenizer, model = get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=model_id)
+    tokenizer, model_id, model = get_model(
+        model_id, model_revision, load_in_8bit, load_in_4bit, model_args, data_args, sft_args,
+    )
     ds = _get_test_dataset(test_dataset_id, test_dataset_split, tokenizer, data_preprocess_bs)
 
     results = {"instructions": [], "target_responses": [], "candidate_responses": []}
@@ -47,7 +50,8 @@ def gen_local_lm_responses(
                 results["target_responses"].append(target_response)
                 results["candidate_responses"].append(lm_response)
 
-    results['candidate_models'] = [model_id] * len(results["instructions"])
+    results['model_id'] = [model_id] * len(results["instructions"])
+    results['model_revision'] = [model_revision] * len(results["instructions"])
     return datasets.Dataset.from_dict(
         results, split=lm_response_dataset_split
     )
