@@ -2,7 +2,6 @@ import asyncio
 import aiohttp
 from typing import List, Dict
 import os
-import sys
 import json
 import numpy as np
 from datasets import load_dataset
@@ -48,15 +47,15 @@ in the asked format and you must not add any additional text in your response.
 
 
 async def generate_text(prompt):
-    url = (
-        url
-    ) = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={GOOGLE_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={GOOGLE_API_KEY}"
     data = {"contents": [{"parts": [{"text": prompt}]}]}
 
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             if response.status == 200:
                 result = await response.json()
+                # rate-limiting
+                await asyncio.sleep(REQUEST_INTERVAL)
                 return result
             else:
                 print(f"Error: {response.status}")
@@ -81,8 +80,6 @@ async def main():
     print("Creating tasks for asyncio.")
     for prompt in prompts:
         tasks.append(generate_text(prompt))
-        # rate-limiting
-        await asyncio.sleep(REQUEST_INTERVAL)
 
     # fire execution
     results = await asyncio.gather(*tasks)

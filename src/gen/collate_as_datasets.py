@@ -20,17 +20,17 @@ def find_json_snippet(raw_snippet):
     """
     json_parsed_string = None
 
-    json_start_index = raw_snippet.find('[')
-    json_end_index = raw_snippet.rfind(']')
+    json_start_index = raw_snippet.find("[")
+    json_end_index = raw_snippet.rfind("]")
 
     if json_start_index >= 0 and json_end_index >= 0:
-        json_snippet = raw_snippet[json_start_index:json_end_index+1]
+        json_snippet = raw_snippet[json_start_index : json_end_index + 1]
         try:
             json_parsed_string = json.loads(json_snippet, strict=False)
         except:
-            raise ValueError('......failed to parse string into JSON format')
+            raise ValueError("......failed to parse string into JSON format")
     else:
-        raise ValueError('......No JSON code snippet found in string.')
+        raise ValueError("......No JSON code snippet found in string.")
 
     return json_parsed_string
 
