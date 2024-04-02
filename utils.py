@@ -23,7 +23,11 @@ def update_args(parser, args):
                 if current_value == default_value:
                     setattr(args, key, value)
 
-    return args
+        # return updated args
+        return args
+    else:
+        # return args as is (unmodified)
+        return args
 
 def is_push_to_hf_hub_enabled(push_enabled, dataset_id, split, hf_token):
     if push_enabled is True:
