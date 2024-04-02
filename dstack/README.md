@@ -1,8 +1,8 @@
 # Run steps on dstack
 
-[dstack](https://dstack.ai/) is an open source project, so you can use it for your own cloud accounts of AWS, GCP, Azure, .... However, I highly recommend to use [dstack Sky](https://sky.dstack.ai/) which is a cloud version of dstack server. As an organization, dstack provides GPU quotas through contracts with various cloud service providers (GCP, AWS, Azure, Vast.ai, LambdaLabs, Datacrunch.io, TensorDock, ...). Hence, it is very likely you could get desired GPU machine. Plus, you will almost always be able to get spot instances too.
+[dstack](https://dstack.ai/) is an open source project, so you can use it for your own cloud accounts from AWS, GCP, Azure, Vast.ai, LambdaLabs, Datacrunch.io, TensorDock. However, I highly recommend to use [dstack Sky](https://sky.dstack.ai/) which is a cloud version of dstack server. As an organization, dstack provides GPU quotas through contracts with various cloud service providers. Hence, it is very likely you could get desired GPU machine. Plus, you will almost always be able to get spot instances too.
 
-Below instructions assumes that you have dstack Sky account, but the same instructions could be applied if you have configured your own dstack server.
+Below instructions assumes that you have dstack Sky account, but the same instructions could be applied if you have configured your own dstack server. If you are interested in to create dstack Sky account [check out this link](https://sky.dstack.ai).
 
 ## Install dstack client
 
