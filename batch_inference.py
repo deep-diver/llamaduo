@@ -42,6 +42,17 @@ def batch_inference(args):
     return local_lm_responses
 
 def update_args(parser, args):
+    """
+    update_args replaces default values of the args. Arguments that are directly
+    specified from CLI has more priority. 
+    
+    For instance, if the value of an argument has default value, and if the value of 
+    that argument is defined in YAML file, the latter value will be kept. 
+
+    If the value of an argument is specified manually/directly from the CLI (not default),
+    but if the value of that argument is defined in YAML file, the latter value will be 
+    ignored. Hence, the former value will be kept.
+    """
     if args.from_config is not None:
         with open(args.from_config, 'r') as file:
             config_from_yaml = yaml.safe_load(file)
