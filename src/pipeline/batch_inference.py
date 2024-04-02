@@ -47,6 +47,7 @@ def gen_local_lm_responses(
                 results["target_responses"].append(target_response)
                 results["candidate_responses"].append(lm_response)
 
+    results['candidate_models'] = [model_id] * len(results["instructions"])
     return datasets.Dataset.from_dict(
         results, split=lm_response_dataset_split
     )
