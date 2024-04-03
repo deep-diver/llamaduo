@@ -3,7 +3,7 @@
 This project showcase LLMOps pipeline that fine-tune a small size LLM model to prepare the outage of the service LLM. For this project, we choose [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model.
 
 For this project, the following tech stacks are chosen:
-- Hugging Face open source ecosystem ([transformers](https://github.com/huggingface/transformers), [peft](https://github.com/huggingface/peft), [alignment-handbook](https://github.com/huggingface/alignment-handbook), [Hub](https://huggingface.co/docs/hub/en/index))
+- Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
 - [Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) on [Google AI Studio](https://ai.google.dev/).
 
 ## Motivation
