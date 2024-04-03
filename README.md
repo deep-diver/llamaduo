@@ -15,7 +15,7 @@ We assume that small size LLM could show comparable performance to that of servi
 
 ## Overview
 
-This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It is your choice how to use them.
+This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
 The prerequisite to run these toolset is to have a dataset consisting of desired `(prompt, response)` pairs. The exact format of the dataset could be found [here](https://huggingface.co/datasets/sayakpaul/no_robots_only_coding). The `prompt` is the input to the small size LLM to generate output. Then, `prompt`, `response`, and the `generated output` are going to be used to evaluate the fine-tuned small size LLM. The main idea is to make small size LLM to output as much as similar to the given response.
 
