@@ -6,9 +6,7 @@ from datetime import datetime
 from datasets import load_dataset, DatasetDict
 
 from ..gen.gemini import get_model as get_service_model
-from ..gen.local_lm import get_model, gen_model_outputs
 from ..gen.utils import call_service_llm
-from ..pipeline.utils import get_args
 
 def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     """
