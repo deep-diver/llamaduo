@@ -1,0 +1,14 @@
+ft_model_id: sayakpaul/gemma-2b-sft-qlora-no-robots
+ft_model_revision: main
+ft_model_config_path: config/sample_config.yaml
+load_in_8bit: true
+load_in_4bit: false
+test_ds_id: sayakpaul/no_robots_only_coding
+push_lm_responses_to_hf_hub: true
+test_ds_split: test_sft
+batch_infer_data_preprocess_bs: 16
+inference_bs: 4
+repeat: 4
+lm_response_ds_id: chansung/lm_response_test
+lm_response_ds_split: batch_infer
+lm-response-append: true

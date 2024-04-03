@@ -5,7 +5,7 @@ from transformers import (
 )
 from alignment.model_utils import get_tokenizer
 
-def get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model_id=None):
+def get_model(model_id, model_revision, load_in_8bit, load_in_4bit, model_args, data_args, sft_args):
     """
     get_model instantiates and return fine-tuned language model and tokenzier.
 
@@ -13,16 +13,18 @@ def get_model(load_in_8bit, load_in_4bit, model_args, data_args, sft_args, model
     model_args -- ModelArguments obtained from H4ArgumentParser
     data_args -- DataArguments obtained from H4ArgumentParser
     """
+    model_id = sft_args.hub_model_id if model_id is None else model_id
     tokenizer = get_tokenizer(model_args, data_args)
     quantization_config = BitsAndBytesConfig(load_in_8bit=load_in_8bit, load_in_4bit=load_in_4bit)
     
     model = AutoModelForCausalLM.from_pretrained(
-        sft_args.hub_model_id if model_id is None else model_id, 
+        model_id,
+        revision=model_revision, 
         quantization_config=quantization_config, 
         torch_dtype=torch.bfloat16, device_map="auto"
     )
 
-    return tokenizer, model
+    return tokenizer, model_id, model
 
 def gen_model_outputs(model, tokenizer, batch_data, temperature=0.4, max_new_tokens=1024, delimiter="assistant\n"):
     """

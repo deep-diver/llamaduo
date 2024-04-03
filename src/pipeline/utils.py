@@ -1,3 +1,5 @@
+from huggingface_hub import HfApi
+
 from alignment import (
     ModelArguments,
     DataArguments,
@@ -19,6 +21,13 @@ def get_args(yaml_file_path):
         ).parse_yaml_file(yaml_file_path)
     
     return configs
+
+def get_sha(model_id, revision, hf_token):
+    hf_api = HfApi(token=hf_token)
+    model_info = hf_api.model_info(
+        model_id, revision=revision
+    )
+    return model_info.sha
 
 def push_to_hf_hub(dataset_id, split, ds, hf_token, append=True):
     """
