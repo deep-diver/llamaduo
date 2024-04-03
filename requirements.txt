@@ -7,3 +7,5 @@ datasets
 google-generativeai
 toml
 pyyaml
+huggingface_hub
+tqdm
