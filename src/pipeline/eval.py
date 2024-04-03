@@ -1,6 +1,6 @@
 import toml
-import time
 import asyncio
+from tqdm import tqdm
 from string import Template
 from datasets import load_dataset, DatasetDict
 
@@ -78,7 +78,7 @@ async def eval_on_records(
     eval_prompt_tmpl = _get_eval_prompt_tmpl(eval_prompt_tmpl_path)
     lm_response_ds = _get_lm_response_dataset(lm_response_dataset_id, lm_response_dataset_split, eval_prompt_tmpl, batch_size=batch_size)
 
-    for idx in range(0, len(lm_response_ds), eval_workers):
+    for idx in tqdm(range(0, len(lm_response_ds), eval_workers), desc="batches"):
         batch_data = lm_response_ds[idx:idx+eval_workers]
         assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers)
 
@@ -94,6 +94,7 @@ async def eval_on_records(
 
     ds_with_scores = lm_response_ds.add_column("similarity_scores", similarity_scores)
     ds_with_scores = ds_with_scores.add_column("precision_scores", precision_scores)
+    ds_with_scores = ds_with_scores.add_column("evaluators", [service_model_name]*len(similarity_scores))
     ds_with_scores = DatasetDict(
         {eval_dataset_split: ds_with_scores}
     )
