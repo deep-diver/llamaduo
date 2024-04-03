@@ -50,10 +50,10 @@ def _required_keys_exist(assessment_json):
     qualified = keys_to_check.issubset(set(assessment_json.keys()))
     if qualified is False:
         raise ValueError("missing required keys")
-
+	
     return assessment_json
 
-async def call_service_llm(eval_model, prompt, retry_num=3, job_num=None):
+async def call_service_llm(eval_model, prompt, retry_num=10, job_num=None):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -65,8 +65,7 @@ async def call_service_llm(eval_model, prompt, retry_num=3, job_num=None):
     while assessment_json is None and cur_retry < retry_num:
         try:
             assessment = await generate_async(
-                eval_model,
-                prompt=prompt,
+                eval_model, prompt=prompt,
             )
 
             assessment_json = _parse_first_json_snippet(assessment)
