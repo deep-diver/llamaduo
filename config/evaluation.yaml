@@ -1,0 +1,15 @@
+service_model_name: gemini-1.0-pro
+prompt_tmpl_path: config/prompts.toml
+
+lm_response_ds_id: chansung/lm_response_test
+lm_response_ds_split: batch_infer
+
+eval_data_preprocess_bs: 16
+eval_workers: 4
+
+avg_similarity_threshold: 90.0
+avg_precision_threshold: 90.0
+
+push_eval_to_hf_hub: true
+eval_ds_id: chansung/eval_dataset_test
+eval_ds_split: eval
