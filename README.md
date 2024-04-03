@@ -19,6 +19,13 @@ This project comes with the toolset of batch inference, evaluation, and syntheti
 
 The prerequisite to run these toolset is to have a dataset consisting of desired `(prompt, response)` pairs. The exact format of the dataset could be found [here](https://huggingface.co/datasets/sayakpaul/no_robots_only_coding). The `prompt` is the input to the small size LLM to generate output. Then, `prompt`, `response`, and the `generated output` are going to be used to evaluate the fine-tuned small size LLM. The main idea is to make small size LLM to output as much as similar to the given response.
 
+### Fine-tuning
+
+We leverage Hugging Face's [alignment-handbook](https://github.com/huggingface/alignment-handbook) to streamline the LLM fine-tuning. Specifically, all the detailed fine-tuning parameters for this project could be found in [this config](config/sample_config.yaml). Also note that the same config can be reused for the batch inference in the next section to make sure there is no mimatched configurations.
+
+Also, we are planning to add scripts to run the fine-tuning on the cloud. The list of supported cloud platform will be updated below: 
+- [`dstack Sky`](https://sky.dstack.ai/): detailed instruction can be found in [dstack directory](dstack/).
+
 ### Batch inference
 
 Batch inference lets fine-tuned LLM to generate text and push the results on the Hugging Face Dataset repository. 
