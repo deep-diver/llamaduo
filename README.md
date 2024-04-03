@@ -8,7 +8,7 @@ For this project, the following tech stacks are chosen:
 
 ## Motivation
 
-We assume that small size LLM could show comparable performance to that of service type LLM on a specific task, and this project is to prove such possibility. Furthermore, this project shows how to smoothly migrate from service type LLM to small sized LLM when 
+We assume that a small LLM could show comparable performance to that of a service-type LLM on a specific task, and this project tries to showcase such a possibility in a practically grounded manner. Furthermore, this project shows how to smoothly migrate from service-type LLM to small LLM when 
 - we experience the outage of service type LLM which could cause disasters on many service/applications that rely on the service type LLM.
 - we want decide to use small sized LLM hosted on local servers for the cost savings or privacy issues.
 - ......
