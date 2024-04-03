@@ -4,7 +4,7 @@ This project showcase LLMOps pipeline that fine-tune a small size LLM model to p
 
 For this project, the following tech stacks are chosen:
 - Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
-- [Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) on [Google AI Studio](https://ai.google.dev/).
+- [Gemini API](https://ai.google.dev/docs).
 
 ## Motivation
 
