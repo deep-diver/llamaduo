@@ -29,6 +29,7 @@ def batch_inference(args):
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
         args.lm_response_ds_split, args.ft_model_config_path, 
+        args.hf_token
     )
 
     if hf_hub is True:
@@ -85,6 +86,5 @@ if __name__ == "__main__":
                         help="Wheter to overwrite or append on the existing Hugging Face Dataset repository")
     args = parser.parse_args()
     args = update_args(parser, args)
-    print(args)
 
-    # batch_inference(args)
+    batch_inference(args)

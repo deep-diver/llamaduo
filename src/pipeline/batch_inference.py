@@ -1,8 +1,9 @@
 import datasets
 from datasets import load_dataset
+from tqdm import tqdm
 
 from ..gen.local_lm import get_model, gen_model_outputs
-from ..pipeline.utils import get_args
+from ..pipeline.utils import get_args, get_sha
 
 def _get_test_dataset(dataset_id, split, tokenizer, batch_size):
     """
@@ -28,17 +29,19 @@ def gen_local_lm_responses(
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
     lm_response_dataset_split, config_path, 
+    hf_token
 ):
     model_args, data_args, sft_args = get_args(config_path)
     tokenizer, model_id, model = get_model(
         model_id, model_revision, load_in_8bit, load_in_4bit, model_args, data_args, sft_args,
     )
+    model_sha = get_sha(model_id, model_revision, hf_token)
     ds = _get_test_dataset(test_dataset_id, test_dataset_split, tokenizer, data_preprocess_bs)
 
     results = {"instructions": [], "target_responses": [], "candidate_responses": []}
 
-    for idx in range(0, len(ds), inference_bs):
-        for repeat_idx in range(repeat):
+    for idx in tqdm(range(0, len(ds), inference_bs), desc="batches"):
+        for repeat_idx in tqdm(range(repeat), desc="repeat"):
             batch_data = ds[idx:idx+inference_bs]
             lm_responses = gen_model_outputs(model, tokenizer, batch_data)
 
@@ -51,7 +54,7 @@ def gen_local_lm_responses(
                 results["candidate_responses"].append(lm_response)
 
     results['model_id'] = [model_id] * len(results["instructions"])
-    results['model_revision'] = [model_revision] * len(results["instructions"])
+    results['model_sha'] = [model_sha] * len(results["instructions"])
     return datasets.Dataset.from_dict(
         results, split=lm_response_dataset_split
     )
