@@ -8,10 +8,16 @@ For this project, the following tech stacks are chosen:
 
 ## Motivation
 
-We assume that a small LLM could show comparable performance to that of a service-type LLM on a specific task, and this project tries to showcase such a possibility in a practically grounded manner. Furthermore, this project shows how to smoothly migrate from service-type LLM to small LLM when 
-- we experience the outage of service type LLM which could cause disasters on many service/applications that rely on the service type LLM.
-- we want decide to use small sized LLM hosted on local servers for the cost savings or privacy issues.
-- ......
+We assume that a small LLM could show comparable performance to that of a service-type LLM on a specific task, and this project tries to showcase such a possibility in a practically grounded manner. Furthermore, this project shows how to smoothly migrate from service LLM to small LLM. 
+
+Assume that service LLM is integrated into your service or system. However, from time to time, the service LLM should be replaced for the following reaons:
+- failure of service LLM which causes disastrous problems.
+- data privacy issue. You don't want to expose your private data.
+- some system runs without internet connection. Service LLM did a great job on PoC, but now you need the same intelligence in a on-premise environment.
+- version control issue. Service LLMs changes their versions from time to time, and legacy versions will be obsoleted. However, we just want to keep the behaviour as is.
+- ...
+
+To prepare such disastrous situations, this project suggests to migrate from service LLM to local small size LLM. Since we are satisfied with the results from service LLM, we know our inputs(prompts) and the desired outputs. Then, we can fine-tune small size LLM on the collected prompts to match the desired outputs. Furthermore, if the fine-tuned LLM's performance is still poor, we can grow the size of the dataset by generating more of similar data via service LLM. 
 
 ## Overview
 
