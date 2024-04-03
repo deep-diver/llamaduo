@@ -2,6 +2,7 @@ import toml
 import asyncio
 from tqdm import tqdm
 from string import Template
+from datetime import datetime
 from datasets import load_dataset, DatasetDict
 
 from ..gen.gemini import get_model as get_service_model
@@ -68,6 +69,7 @@ async def eval_on_records(
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
     """
+    today = datetime.today().strftime("%Y-%m-%d")
     similarity_scores = []
     precision_scores = []
 
@@ -94,7 +96,10 @@ async def eval_on_records(
 
     ds_with_scores = lm_response_ds.add_column("similarity_scores", similarity_scores)
     ds_with_scores = ds_with_scores.add_column("precision_scores", precision_scores)
+
     ds_with_scores = ds_with_scores.add_column("evaluators", [service_model_name]*len(similarity_scores))
+    ds_with_scores = ds_with_scores.add_column("dates", [today]*len(similarity_scores))
+
     ds_with_scores = DatasetDict(
         {eval_dataset_split: ds_with_scores}
     )

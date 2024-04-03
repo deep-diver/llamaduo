@@ -75,9 +75,9 @@ $ python batch_inference.py --from-config config/evaluation.yaml
 
 Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure:
 
-| column names | ommited.. | eval_prompts |  similarity_scores  | precision_scores  |  evaluators |
+| column names | ommited.. | eval_prompts |  similarity_scores  | precision_scores  |  evaluators | dates |
 |---|---|---|---|---|---|
-| descriptions | all columns are copied from batch inference | prompts input to the evaluator | similarity score in 0~100 scale | precision score in 0~100 scale | model name used as evaluator |
+| descriptions | all columns are copied from batch inference | prompts input to the evaluator | similarity score in 0~100 scale | precision score in 0~100 scale | model name used as evaluator | dates |
 
 ### Synthetic data generation
 
