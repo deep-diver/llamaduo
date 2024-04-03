@@ -1,43 +1,71 @@
 # LLMOps Pipeline
 
-This project showcase LLMOps pipeline that fine-tune a small sized LLM model to prepare the outage of the service type LLM. For this project, we choose [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model.
+This project showcase LLMOps pipeline that fine-tune a small size LLM model to prepare the outage of the service LLM. For this project, we choose [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model.
 
 For this project, the following tech stacks are chosen:
-- [TensorFlow Extended](https://www.tensorflow.org/tfx?hl=ko) (TFX) for building Machine Learning pipeline.
-- [KerasNLP](https://keras.io/keras_nlp/) and [Keras](https://keras.io/) in general to fine-tune Gemma 2B/7B.
-- [Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini) on Google Cloud/Vertex AI.
+- Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
+- [Gemini API](https://ai.google.dev/docs).
 
-> When we finish up the project, there is possibility that we could add [Gemini API](https://ai.google.dev/) from Google AI Studio instead of Vertex AI. Also, we could showcase how to fine-tune Mistral-7B instead of Gemma models. We will see.
+## Motivation
+
+We assume that a small LLM could show comparable performance to that of a service-type LLM on a specific task, and this project tries to showcase such a possibility in a practically grounded manner. Furthermore, this project shows how to smoothly migrate from service LLM to small LLM. 
+
+Assume that service LLM is integrated into your service or system. However, from time to time, the service LLM should be replaced for the following reaons:
+- failure of service LLM which causes disastrous problems.
+- data privacy issue. You don't want to expose your private data.
+- some system runs without internet connection. Service LLM did a great job on PoC, but now you need the same intelligence in a on-premise environment.
+- version control issue. Service LLMs changes their versions from time to time, and legacy versions will be obsoleted. However, we just want to keep the behaviour as is.
+- ...
+
+To prepare such disastrous situations, this project suggests to migrate from service LLM to local small size LLM. Since we are satisfied with the results from service LLM, we know our inputs(prompts) and the desired outputs. Then, we can fine-tune small size LLM on the collected prompts to match the desired outputs. Furthermore, if the fine-tuned LLM's performance is still poor, we can grow the size of the dataset by generating more of similar data via service LLM. 
 
 ## Overview
 
-We assume that small sized LLM could show comparable performance to that of service type LLM on a certain task, and this project is to prove such possibility. Furthermore, this project shows how to smoothly migrate from service type LLM to small sized LLM when 
-- we experience the outage of service type LLM which could cause disasters on many service/applications that rely on the service type LLM.
-- we want decide to use small sized LLM hosted on local servers for the cost savings or privacy issues.
-- ......
+This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
-We are going to extend the previous project, [GPT2Alpaca Pipeline](https://github.com/deep-diver/gpt2-ft-pipeline) which showcased how to fine-tune [KerasNLP's GPT2](https://keras.io/api/keras_nlp/models/gpt2/) model on [Alpaca dataset](https://github.com/gururise/AlpacaDataCleaned). Based on that, this project aims to add the following features (only the code snippets to build end to end TFX pipeline is reused from the previous project):
+The prerequisite to run these toolset is to have a dataset consisting of desired `(prompt, response)` pairs. The exact format of the dataset could be found [here](https://huggingface.co/datasets/sayakpaul/no_robots_only_coding). The `prompt` is the input to the small size LLM to generate output. Then, `prompt`, `response`, and the `generated output` are going to be used to evaluate the fine-tuned small size LLM. The main idea is to make small size LLM to output as much as similar to the given response.
 
-- Replacing GPT2 with Gemma 2B/7B
-- Introducing coverage dataset
-  - coverage dataset consists of a handful of `[prompt, output]` pairs. This data represents what we believe as desired `[prompt, output]` from service type LLM. That means fine-tuned model would be deployable if it could generate similar quality of outputs based on the give prompts.
-  - There are two main purpose of coverage dataset
-    - evaluate a fine-tuned model. To do this, we ask larger model like "Consider the score of the first output is 100/100, then what would be the score of the second output?".
-    - seed to generate similar but not exactly the same dataset. Since the main focus to fine-tune a model is the achieve 100/100 score ideally, the coverage dataset could be a good source to generate synthetic dataset.
-    - However, there could be a sort of generalization issue here if we use all of the coverage dataset for synthetic data generation. Hence, splitting it into seed and validation datasets should be considered.
-- Replacing Alpaca Dataset to synthetically generated dataset by introducing `SynthDataGen` custom TFX component.
-  - converage dataset is going to be used as seed data to generate diverse synthetic dataset. Synthetic dataset is generated by service type LLM.
-- Introducing `LLMEvaluator` custom TFX component
-  - The purpose of `LLMEvaluator` component is to assess the outputs of the fine-tuned small sized LLM. This component asks this assessment to service type LLM based on the outputs from the coverage dataset and the outputs generated by the fine-tuned small sized LLM.
-  - `LLMEvaluator` component outputs the assessment results in percentage. With this, we could decide the coverage rate. 
-- Continuous pipeline
-  - If the converage rate from the `LLMEvaluator` is still below a certain threshold, we could ask `SynthDataGen` component to generate more of synthetic data.
+### Fine-tuning
 
-## Todos
+We leverage Hugging Face's [alignment-handbook](https://github.com/huggingface/alignment-handbook) to streamline the LLM fine-tuning. Specifically, all the detailed fine-tuning parameters for this project could be found in [this config](config/sample_config.yaml). Also note that the same config can be reused for the batch inference in the next section to make sure there is no mimatched configurations.
 
-- [ ] Notebook to define coverage dataset.
-- [ ] Notebook to define `SynthDataGen` component's functionality.
-- [ ] Notebook to define `LLMEvaluator` component's functionality.
-- [ ] Implement `SynthDataGen` and `LLMEvaluator` as custom TFX component.
-- [ ] Notebook to define a portion of TFX pipeline with the custom component to fine-tune Gemma 2B/7B models.
-- [ ] Implement a whole TFX pipeline including automatically exporting models and application to Hugging Face Hub.
+Also, we are planning to add scripts to run the fine-tuning on the cloud. The list of supported cloud platform will be updated below: 
+- [`dstack Sky`](https://sky.dstack.ai/): detailed instruction can be found in [dstack directory](dstack/).
+
+### Batch inference
+
+Batch inference lets fine-tuned LLM to generate text and push the results on the Hugging Face Dataset repository. 
+
+To perform this you need to run the following commands in terminal:
+
+```console
+# HF_TOKEN is required to access gated model repository 
+# and push the resulting outputs to the Hugging Face Hub.
+$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
+
+# All parameters defined in the config/batch_inference.yaml file
+# could be manually inputted as CLI arguments (arg names are the same)
+$ python batch_inference.py --from-config config/batch_inference.yaml
+```
+
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure:
+
+| column names | instructions |  target_responses |  candidate_responses  | model_id  |  model_sha |
+|---|---|---|---|---|---|
+| descriptions | the input prompts | desired outputs |  model generated outputs  |  model id that generated outputs  |  the version of the model |
+
+### Evaluation
+
+Evaluation evaluates the generated text from fine-tuned LLM with the help of service LLM. The evaluation criteria is the similarity and quality by comparing to the given desired outputs.
+
+(Instruction WIP)
+
+### Synthetic data generation
+
+Synthetic data generation generates similar data to the ones used to fine-tune the LLM. This could be performed based on the evaluation results. For instance, if you are not satisfied with the evaluation results, and if you think the training dataset is not large enough, you can create more of the similar data to boost the performance of the LLM.
+
+(Instruction WIP)
+
+## Acknowledgments
+
+This is a project built during the Gemma/Gemini sprints held by Google's ML Developer Programs team. We are thankful to be granted good amount of GCP credits to finish up this project. Thanks to Hugging Face for providing Sayak with resources to run some fine-tuning experiments. 
