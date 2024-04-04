@@ -48,7 +48,7 @@ $ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
 $ python batch_inference.py --from-config config/batch_inference.yaml
 ```
 
-Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure:
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/lm_response_test)):
 
 | column names | instructions |  target_responses |  candidate_responses  | model_id  |  model_sha |
 |---|---|---|---|---|---|
@@ -73,7 +73,7 @@ $ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
 $ python batch_inference.py --from-config config/evaluation.yaml
 ```
 
-Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure:
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/eval_dataset_test)):
 
 | column names | ommited.. | eval_prompts |  similarity_scores  | precision_scores  |  evaluators | dates |
 |---|---|---|---|---|---|
