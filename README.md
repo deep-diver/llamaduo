@@ -1,4 +1,6 @@
-# LLMOps Pipeline
+# LLaMADuo
+
+<img src="assets/logo.png" style="display: block; margin-left: auto; margin-right: auto;">
 
 This project showcase LLMOps pipeline that fine-tune a small size LLM model to prepare the outage of the service LLM. For this project, we choose [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model.
 
