@@ -48,7 +48,7 @@ $ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
 $ python batch_inference.py --from-config config/batch_inference.yaml
 ```
 
-Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure:
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/lm_response_test)):
 
 | column names | instructions |  target_responses |  candidate_responses  | model_id  |  model_sha |
 |---|---|---|---|---|---|
@@ -58,7 +58,26 @@ Then, the resulting outputs will be pushed to Hugging Face Dataset repository in
 
 Evaluation evaluates the generated text from fine-tuned LLM with the help of service LLM. The evaluation criteria is the similarity and quality by comparing to the given desired outputs.
 
-(Instruction WIP)
+To perform this you need to run the following commands in terminal:
+
+```console
+# HF_TOKEN is required to access gated model repository 
+# and push the resulting outputs to the Hugging Face Hub.
+$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
+
+# GEMINI_API_KEY is required to call Gemini API
+$ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
+
+# All parameters defined in the config/evaluation.yaml file
+# could be manually inputted as CLI arguments (arg names are the same)
+$ python batch_inference.py --from-config config/evaluation.yaml
+```
+
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/eval_dataset_test)):
+
+| column names | ommited.. | eval_prompts |  similarity_scores  | precision_scores  |  evaluators | dates |
+|---|---|---|---|---|---|
+| descriptions | all columns are copied from batch inference | prompts input to the evaluator | similarity score in 0~100 scale | precision score in 0~100 scale | model name used as evaluator | dates |
 
 ### Synthetic data generation
 
