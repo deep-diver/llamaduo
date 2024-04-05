@@ -31,7 +31,6 @@ async def synth_data_gen(args):
         args.reference_ds_id, args.reference_ds_split, args.num_samples,
         args.topic, args.prompt_tmpl_path,
         args.service_model_name, args.gen_workers,
-        args.save_dir_path
     )
     dataset = collage_as_dataset(
         filenames, args.service_model_name, args.topic, args.synth_ds_split
@@ -74,8 +73,6 @@ if __name__ == "__main__":
                         help="What kind of topics/tasks that synthetic dataset will cover")
     parser.add_argument("--gen-workers", type=int, default=4,
                         help="How many workers to process synthetic dataset generation")
-    parser.add_argument("--save-dir-path", type=str, default="tmp",
-                        help="Directory where the intermediate resulting JSON files to be saved")
     parser.add_argument("--push-synth-ds-to-hf-hub", action="store_true",
                         help="Whether to push generated synthetic data to Hugging Face Dataset repository(Hub)")
     parser.add_argument("--synth-ds-id", type=str, default=None,
