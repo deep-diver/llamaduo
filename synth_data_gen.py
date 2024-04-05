@@ -28,7 +28,8 @@ async def synth_data_gen(args):
         args.synth_ds_id, args.synth_ds_split, args.hf_token
     )
     filenames = await synth_data_generation(
-        args.reference_ds_id, args.reference_ds_split, args.num_samples,
+        args.reference_ds_id, args.reference_ds_split, 
+        args.seed, args.num_samples,
         args.topic, args.prompt_tmpl_path,
         args.service_model_name, args.gen_workers,
     )
@@ -69,6 +70,8 @@ if __name__ == "__main__":
                         help="Split of the reference dataset")
     parser.add_argument("--num-samples", type=int, default=5,
                         help="How many data to sample from the reference dataset")
+    parser.add_argument("--seed", type=int, default=2004,
+                        help="Seed to generate indicies for the samples")
     parser.add_argument("--topic", type=str, default=None,
                         help="What kind of topics/tasks that synthetic dataset will cover")
     parser.add_argument("--gen-workers", type=int, default=4,

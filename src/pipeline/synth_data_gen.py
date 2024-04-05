@@ -47,11 +47,13 @@ def _format_response(responses: List[Dict[str, str]]):
 
     return seed_prompts, final_instruction_answer_pairs
 
-def _sampling(dataset_id, split, num_sample):
+def _sampling(dataset_id, split, num_sample, seed):
     """
     _sampling samples a nubmer of data indices (as many as specified num_sample)
     from the given dataset_id[split]
     """
+    np.random.seed(seed)
+
     ds = load_dataset(dataset_id, split=split)
     total_original_samples = len(ds)
     random_indices = np.random.randint(
@@ -103,7 +105,8 @@ async def _gen_synth_data(prompts, model, eval_workers):
     return generated_data
 
 async def synth_data_generation(
-    dataset_id, split, num_sample,
+    dataset_id, split, 
+    seed, num_sample,
     topic, prompt_tmpl_path,
     service_model_name, gen_workers
 ):
@@ -115,7 +118,7 @@ async def synth_data_generation(
     3. concurrently generating synthetic data 
     4. exporting generated results to external JSON files
     """
-    samples = _sampling(dataset_id, split, num_sample)
+    samples = _sampling(dataset_id, split, num_sample, seed)
     prompts = _craft_prompts(samples, topic, prompt_tmpl_path)
 
     gen_model = get_service_model(service_model_name)

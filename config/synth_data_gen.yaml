@@ -4,6 +4,7 @@ prompt_tmpl_path: config/prompts.toml
 reference_ds_id: sayakpaul/no_robots_only_coding
 reference_ds_split: train_sft
 num_samples: 5
+seed: 2024
 topic: Coding
 
 prompt_tmpl_path: config/prompts.toml
@@ -11,5 +12,5 @@ prompt_tmpl_path: config/prompts.toml
 gen_workers: 4
 
 push_synth_ds_to_hf_hub: true
-synth_ds_id: chansung/synth_ds_test
+synth_ds_id: chansung/synth_ds_test2
 synth_ds_split: test
