@@ -41,7 +41,7 @@ async def synth_data_gen(args):
         # dataset with columns of (prompts, prompt_ids, messages, categories) will be recorded
         push_to_hf_hub(
             args.synth_ds_id, args.synth_ds_split, 
-            dataset, args.hf_token, False
+            dataset, args.hf_token, args.synth_ds_append
         )
     else:
         dataset.save_to_disk(args.synth_ds_id)
@@ -84,6 +84,8 @@ if __name__ == "__main__":
                         help="Hugging Face Dataset repository ID that synthetic dataset to be pushed")
     parser.add_argument("--synth-ds-split", type=str, default="eval",
                         help="Split of the synthetic dataset") 
+    parser.add_argument("--synth-ds-append", action="store_true", default=True,
+                        help="Wheter to overwrite or append on the existing Hugging Face Dataset repository")
 
     args = parser.parse_args()
     args = update_args(parser, args)
