@@ -11,3 +11,6 @@ prompt_tmpl_path: config/prompts.toml
 gen_workers: 4
 
 save_dir_path: tmp
+push_synth_ds_to_hf_hub: true
+synth_ds_id: chansung/synth_ds_test
+synth_ds_split: test
