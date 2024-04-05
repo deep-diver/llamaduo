@@ -85,8 +85,26 @@ Then, the resulting outputs will be pushed to Hugging Face Dataset repository in
 
 Synthetic data generation generates similar data to the ones used to fine-tune the LLM. This could be performed based on the evaluation results. For instance, if you are not satisfied with the evaluation results, and if you think the training dataset is not large enough, you can create more of the similar data to boost the performance of the LLM.
 
-(Instruction WIP)
+To perform this you need to run the following commands in terminal:
 
+```console
+# HF_TOKEN is required to access gated model repository 
+# and push the resulting outputs to the Hugging Face Hub.
+$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
+
+# GEMINI_API_KEY is required to call Gemini API
+$ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
+
+# All parameters defined in the config/synth_data_gen.yaml file
+# could be manually inputted as CLI arguments (arg names are the same)
+$ python synth_data_gen.py --from-config config/synth_data_gen.yaml
+```
+
+Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/synth_ds_test2)):
+
+| column names | generators | prompt_ids |  seed_prompts  | messages  |  category | 
+|---|---|---|---|---|---|
+| descriptions | model used to generate data | -- | the base prompts used to generate data | generated synthetic data | category this data belongs to |
 ## Acknowledgments
 
 This is a project built during the Gemma/Gemini sprints held by Google's ML Developer Programs team. We are thankful to be granted good amount of GCP credits to finish up this project. Thanks to Hugging Face for providing Sayak with resources to run some fine-tuning experiments. 

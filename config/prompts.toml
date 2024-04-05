@@ -26,3 +26,21 @@ Provide the assessment in the following JSON format:
   "precision_assessment": {"score": [Insert precision score here],"reason": [Insert how the precision score is determined]}
 }
 """
+
+[synth_data_gen]
+prompt = """
+Generate a series of (instruction, response) pairs that are similar in context and structure to the example provided below. Each pair should consist of a concise instruction followed by an appropriate, detailed response. The instruction should pose a clear task or question, while the response should provide a comprehensive answer or solution that could be understood by someone with a basic understanding of the subject.
+
+Example pair:
+
+Instruction: $instruction
+Response: $response
+
+Your task is to generate more pairs that maintain this level of clarity and detail. The topic is $topic. Ensure that the responses are informative and accurate, suitable for an educational context.
+
+Store the generated pairs in JSON format, with each pair as an object within an array. Each object should have two key-value pairs: "instruction" and "response". For instance:
+
+{"contents": [{"instruction": "text", "response": "text"}, {"instruction": "text", "response": "text"}, ...]}
+
+Remember to maintain consistency in the format and ensure the generated pairs are diverse and cover a broad range of subjects. You must return the response in the asked format and you must not add any additional text in your response.
+"""

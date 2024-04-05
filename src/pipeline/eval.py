@@ -8,6 +8,8 @@ from datasets import load_dataset, DatasetDict
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
+JSON_KEYS_TO_CHECK = {"similarity_assessment", "precision_assessment"}
+
 def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     """
     _get_eval_prompt_tmpl returns pre-defined prompt template for 
@@ -48,7 +50,7 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
         partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
         tasks = [
             asyncio.create_task(
-                call_service_llm(eval_model, eval_prompt, retry_num=5, job_num=idx)
+                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=5, job_num=idx)
             ) for eval_prompt in partial_eval_prompts
         ]
         results = await asyncio.gather(*tasks)
