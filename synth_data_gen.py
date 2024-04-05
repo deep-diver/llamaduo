@@ -44,7 +44,7 @@ async def synth_data_gen(args):
             dataset, args.hf_token, False
         )
     else:
-        dataset.save_to_disk()
+        dataset.save_to_disk(args.synth_ds_id)
     
     for filename in filenames:
         os.remove(filename)

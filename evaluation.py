@@ -37,7 +37,7 @@ async def evaluate(args):
             args.hf_token, False
         )
     else:
-        eval_results["ds_with_scores"].save_to_disk()
+        eval_results["ds_with_scores"].save_to_disk(args.eval_ds_id)
 
     return eval_results
 

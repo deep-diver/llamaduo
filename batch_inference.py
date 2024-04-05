@@ -41,7 +41,7 @@ def batch_inference(args):
             args.hf_token, args.lm_response_append
         )
     else:
-        local_lm_responses.save_to_disk()
+        local_lm_responses.save_to_disk(args.lm_response_ds_id)
 
     return local_lm_responses
 
