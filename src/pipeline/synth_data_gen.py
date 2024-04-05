@@ -1,4 +1,4 @@
-import os
+import tempfile
 import toml
 import json
 import asyncio
@@ -107,8 +107,7 @@ async def _gen_synth_data(prompts, model, eval_workers):
 async def synth_data_generation(
     dataset_id, split, num_sample,
     topic, prompt_tmpl_path,
-    service_model_name, gen_workers,
-    save_dir_path
+    service_model_name, gen_workers
 ):
     """
     synth_data_generation does the following jobs in order
@@ -118,9 +117,6 @@ async def synth_data_generation(
     3. concurrently generating synthetic data 
     4. exporting generated results to external JSON files
     """
-    if not os.path.exists(save_dir_path):
-        os.makedirs(save_dir_path)
-
     samples = _sampling(dataset_id, split, num_sample)
     prompts = _craft_prompts(samples, topic, prompt_tmpl_path)
 
@@ -128,6 +124,7 @@ async def synth_data_generation(
     print("Generating synthetic data")
     generated_data = await _gen_synth_data(prompts, gen_model, gen_workers)
 
+    save_dir_path = tempfile.gettempdir()
     filenames = []
     print("Exporting to external JSON files")
     for i, (seed_prompt, data) in tqdm(enumerate(zip(prompts, generated_data)), total=len(generated_data), desc="to JSON file"):
