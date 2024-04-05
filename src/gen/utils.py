@@ -42,18 +42,18 @@ def _parse_first_json_snippet(snippet):
 
 	return json_parsed_string
 
-def _required_keys_exist(assessment_json):
+def _required_keys_exist(assessment_json, keys_to_check):
     """
     _required_keys_exist checks if required keys exist in the given assessment_json
     """    
-    keys_to_check = set(["similarity_assessment", "precision_assessment"])
+    keys_to_check = set(keys_to_check)
     qualified = keys_to_check.issubset(set(assessment_json.keys()))
     if qualified is False:
         raise ValueError("missing required keys")
 	
     return assessment_json
 
-async def call_service_llm(eval_model, prompt, retry_num=10, job_num=None):
+async def call_service_llm(eval_model, prompt, keys_to_check, retry_num=10, job_num=None):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -69,7 +69,7 @@ async def call_service_llm(eval_model, prompt, retry_num=10, job_num=None):
             )
 
             assessment_json = _parse_first_json_snippet(assessment)
-            assessment_json = _required_keys_exist(assessment_json)
+            assessment_json = _required_keys_exist(assessment_json, keys_to_check)
         except Exception as e:
             cur_retry = cur_retry + 1
             print(f"......retry [{e}]")

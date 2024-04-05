@@ -1,0 +1,13 @@
+service_model_name: gemini-1.0-ultra-latest
+prompt_tmpl_path: config/prompts.toml
+
+reference_ds_id: sayakpaul/no_robots_only_coding
+reference_ds_split: train_sft
+num_samples: 5
+topic: Coding
+
+prompt_tmpl_path: config/prompts.toml
+
+gen_workers: 4
+
+save_dir_path: tmp
