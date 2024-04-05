@@ -13,6 +13,8 @@ from datasets import (
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
+JSON_KEYS_TO_CHECK = {"contents"}
+
 def _load_all_json_files(filenames):
     """
     _load_all_json_files loads up JSON files as Python dictionaries
@@ -89,12 +91,11 @@ async def _gen_synth_data(prompts, model, eval_workers):
     _gen_synth_data concurrently generates synthetic data based on the given prompts
     """
     generated_data = []
-    keys_to_check = {"contents"}
     for idx in tqdm(range(0, len(prompts), eval_workers), desc="batches"):
         partial_prompts = prompts[idx:idx+eval_workers]
         tasks = [
             asyncio.create_task(
-                call_service_llm(model, eval_prompt, keys_to_check, retry_num=5, job_num=idx)
+                call_service_llm(model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=5, job_num=idx)
             ) for eval_prompt in partial_prompts
         ]
         results = await asyncio.gather(*tasks)
