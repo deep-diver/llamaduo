@@ -52,15 +52,12 @@ def _sampling(dataset_id, split, num_sample):
     _sampling samples a nubmer of data indices (as many as specified num_sample)
     from the given dataset_id[split]
     """
-    samples = []
     ds = load_dataset(dataset_id, split=split)
     total_original_samples = len(ds)
     random_indices = np.random.randint(
         0, total_original_samples, size=(num_sample)
-    ).tolist()
-    for idx in random_indices:
-        samples.append(ds[int(idx)])
-    return samples
+    )
+    return ds.select(random_indices)
 
 def _get_synth_data_gen_prompt_tmpl(prompt_tmpl_path):
     prompts = toml.load(prompt_tmpl_path)
