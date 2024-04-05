@@ -24,16 +24,15 @@ def _load_all_json_files(filenames):
 def _format_response(responses: List[Dict[str, str]]):
     final_instruction_answer_pairs = []
 
-    for response in responses:
-        for res in response['contents']:
-            user_response_dict = {}
-            assistant_response_dict = {}
-            user_response_dict["content"] = res["instruction"]
-            user_response_dict["role"] = "user"
-            assistant_response_dict["content"] = res["response"]
-            assistant_response_dict["role"] = "assistant"
+    for response in responses["contents"]:
+        user_response_dict = {}
+        assistant_response_dict = {}
+        user_response_dict["content"] = response["instruction"]
+        user_response_dict["role"] = "user"
+        assistant_response_dict["content"] = response["response"]
+        assistant_response_dict["role"] = "assistant"
 
-            final_instruction_answer_pairs.append([user_response_dict, assistant_response_dict])
+        final_instruction_answer_pairs.append([user_response_dict, assistant_response_dict])
 
     return final_instruction_answer_pairs
 
@@ -60,7 +59,6 @@ def _craft_prompt(prompt_tmpl, instruction, response, topic):
     )
 
 def _craft_prompts(samples, topic, prompt_tmpl_path):
-    print("Preparing candidate prompts.")
     prompt_tmpl = _get_synth_data_gen_prompt_tmpl(prompt_tmpl_path)
     prompts = [
         _craft_prompt(
@@ -104,7 +102,6 @@ async def synth_data_generation(
 
     samples = _sampling(dataset_id, split, num_sample)
     prompts = _craft_prompts(samples, topic, prompt_tmpl_path)
-    print(json.dumps(prompts, indent=2))
 
     gen_model = get_service_model(service_model_name)
     generated_data = await _gen_synth_data(prompts, gen_model, gen_workers)
@@ -113,7 +110,7 @@ async def synth_data_generation(
     for i, data in tqdm(enumerate(generated_data), total=len(generated_data), desc="to JSON file"):
         if data:
             filename = f"{save_dir_path}/generated_data_{i}.json"
-            filenames.extend(filename)
+            filenames.append(filename)
 
             with open(filename, "w") as f:
                 json.dump(data, f)
