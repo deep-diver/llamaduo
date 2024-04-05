@@ -97,7 +97,7 @@ $ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
 
 # All parameters defined in the config/synth_data_gen.yaml file
 # could be manually inputted as CLI arguments (arg names are the same)
-$ python synth_data_gen.py --from-config config/synth_data_gen.yaml
+$ python data_gen.py --from-config config/synth_data_gen.yaml
 ```
 
 Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/synth_ds_test2)):
