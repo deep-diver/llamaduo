@@ -89,7 +89,7 @@ async def _gen_synth_data(prompts, model, eval_workers):
     _gen_synth_data concurrently generates synthetic data based on the given prompts
     """
     generated_data = []
-    keys_to_check = ["contents"]
+    keys_to_check = {"contents"}
     for idx in tqdm(range(0, len(prompts), eval_workers), desc="batches"):
         partial_prompts = prompts[idx:idx+eval_workers]
         tasks = [

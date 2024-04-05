@@ -45,8 +45,7 @@ def _parse_first_json_snippet(snippet):
 def _required_keys_exist(assessment_json, keys_to_check):
     """
     _required_keys_exist checks if required keys exist in the given assessment_json
-    """    
-    keys_to_check = set(keys_to_check)
+    """
     qualified = keys_to_check.issubset(set(assessment_json.keys()))
     if qualified is False:
         raise ValueError("missing required keys")

@@ -44,7 +44,7 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
     _gen_eval_on_records simultaneously generates evaluations on the eval_prompts
     """
     assessments = []
-    keys_to_check = ["similarity_assessment", "precision_assessment"]
+    keys_to_check = {"similarity_assessment", "precision_assessment"}
     for idx in range(0, len(eval_prompts), eval_workers):
         partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
         tasks = [
