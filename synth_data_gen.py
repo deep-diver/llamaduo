@@ -29,7 +29,7 @@ async def synth_data_gen(args):
         # dataset with columns of (instructions, target_response, candidate_response
         # eval_prompts, similarity_scores, precision_scores) will be recorded
         push_to_hf_hub(
-            args.eval_ds_id, args.eval_ds_split, 
+            args.synth_ds_id, args.synth_ds_split, 
             ds, args.hf_token, False
         )
     
@@ -59,6 +59,12 @@ if __name__ == "__main__":
     parser.add_argument("--topic", type=str, default=None)
     parser.add_argument("--gen-workers", type=int, default=4)
     parser.add_argument("--save_dir_path", type=str, default="tmp")
+    parser.add_argument("--push-synth-ds-to-hf-hub", action="store_true",
+                        help="Whether to push generated evaluation to Hugging Face Dataset repository(Hub)")
+    parser.add_argument("--synth-ds-id", type=str, default=None,
+                        help="Hugging Face Dataset repository ID")
+    parser.add_argument("--synth-ds-split", type=str, default="eval",
+                        help="Split of the lm evak dataset to use for saving.") 
 
     args = parser.parse_args()
     args = update_args(parser, args)
