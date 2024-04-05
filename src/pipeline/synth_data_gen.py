@@ -30,7 +30,6 @@ def _format_response(responses: List[Dict[str, str]]):
     format ([{'role': ... 'content': ...}]).
     """
     final_instruction_answer_pairs = []
-    seed_prompts = [responses["seed_prompt"]] * len(responses["contents"])
 
     for response in responses["contents"]:
         user_response_dict = {}
@@ -41,6 +40,8 @@ def _format_response(responses: List[Dict[str, str]]):
         assistant_response_dict["role"] = "assistant"
 
         final_instruction_answer_pairs.append([user_response_dict, assistant_response_dict])
+
+    seed_prompts = [responses["seed_prompt"]] * len(final_instruction_answer_pairs)
 
     return seed_prompts, final_instruction_answer_pairs
 
