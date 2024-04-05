@@ -4,6 +4,7 @@ import toml
 import json
 import asyncio
 import numpy as np
+from tqdm import tqdm
 from string import Template
 from typing import List, Dict
 
@@ -78,7 +79,7 @@ async def _gen_synth_data(prompts, model, eval_workers):
     """
     generated_data = []
     keys_to_check = ["contents"]
-    for idx in range(0, len(prompts), eval_workers):
+    for idx in tqdm(range(0, len(prompts), eval_workers), desc="batches"):
         partial_prompts = prompts[idx:idx+eval_workers]
         tasks = [
             asyncio.create_task(
@@ -109,7 +110,7 @@ async def synth_data_generation(
     generated_data = await _gen_synth_data(prompts, gen_model, gen_workers)
 
     filenames = []
-    for i, data in enumerate(generated_data):
+    for i, data in tqdm(enumerate(generated_data), total=len(generated_data), desc="to JSON file"):
         if data:
             filename = f"{save_dir_path}/generated_data_{i}.json"
             filenames.extend(filename)
