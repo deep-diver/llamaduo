@@ -46,7 +46,7 @@ def _format_response(responses: List[Dict[str, str]]):
 
 def _sampling(dataset_id, split, num_sample):
     """
-    _sampling samples a nubmer of data (as many as specified num_sample)
+    _sampling samples a nubmer of data indices (as many as specified num_sample)
     from the given dataset_id[split]
     """
     samples = []

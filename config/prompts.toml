@@ -42,6 +42,5 @@ Store the generated pairs in JSON format, with each pair as an object within an 
 
 {"contents": [{"instruction": "text", "response": "text"}, {"instruction": "text", "response": "text"}, ...]}
 
-Remember to maintain consistency in the format and ensure the generated pairs are diverse and cover a broad range of subjects. You must return the response
-in the asked format and you must not add any additional text in your response.
+Remember to maintain consistency in the format and ensure the generated pairs are diverse and cover a broad range of subjects. You must return the response in the asked format and you must not add any additional text in your response.
 """
