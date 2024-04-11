@@ -13,7 +13,7 @@ from datasets import (
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
-JSON_KEYS_TO_CHECK = ["contents"]
+JSON_KEYS_TO_CHECK = {"contents"}
 
 def _load_all_json_files(filenames):
     """
@@ -54,7 +54,7 @@ def _sampling(dataset_id, split, num_sample, seed):
     """
     np.random.seed(seed)
 
-    ds = load_dataset(dataset_id, split=split)
+    ds = load_dataset(dataset_id, split=split, verification_mode="no_checks")
     total_original_samples = len(ds)
     random_indices = np.random.randint(
         0, total_original_samples, size=(num_sample)
@@ -130,7 +130,7 @@ async def synth_data_generation(
     print("Exporting to external JSON files")
     for i, (seed_prompt, data) in tqdm(enumerate(zip(prompts, generated_data)), total=len(generated_data), desc="to JSON file"):
         if data:
-            data["seed_prompt"] = seed_prompt
+            data["seed_prompts"] = seed_prompt
             filename = f"{save_dir_path}/generated_data_{i}.json"
             filenames.append(filename)
 

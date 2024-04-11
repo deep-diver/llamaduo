@@ -37,7 +37,7 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
         batch["eval_prompts"] = eval_prompts
         return batch
         
-    return load_dataset(dataset_id, split=split).map(
+    return load_dataset(dataset_id, split=split, verification_mode="no_checks").map(
         __batch_process, batched=True, batch_size=batch_size
     )
 
@@ -98,8 +98,8 @@ async def eval_on_records(
             each_precision_scores = 0
 
             for each_assessment in each_assessments:
-                each_similarity_scores += each_assessment['similarity_assessment']['score']
-                each_precision_scores += each_assessment['precision_assessment']['score']
+                each_similarity_scores += int(each_assessment['similarity_assessment']['score'])
+                each_precision_scores += int(each_assessment['precision_assessment']['score'])
 
             each_avg_similarity_score = each_similarity_scores / eval_repeat
             each_avg_precision_score = each_precision_scores / eval_repeat

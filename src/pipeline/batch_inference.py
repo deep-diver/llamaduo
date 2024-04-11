@@ -23,7 +23,7 @@ def _get_test_dataset(dataset_id, split, tokenizer, batch_size):
         ]
         return batch
         
-    return load_dataset(dataset_id, split=split).map(
+    return load_dataset(dataset_id, split=split, verification_mode="no_checks").map(
         __batch_process, batched=True, batch_size=batch_size
     )
 
