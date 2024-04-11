@@ -98,11 +98,8 @@ async def eval_on_records(
             each_precision_scores = 0
 
             for each_assessment in each_assessments:
-                try:
-                    each_similarity_scores += each_assessment['similarity_assessment']['score']
-                    each_precision_scores += each_assessment['precision_assessment']['score']
-                except KeyError as e:
-                    print(each_assessment)
+                each_similarity_scores += each_assessment['similarity_assessment']['score']
+                each_precision_scores += each_assessment['precision_assessment']['score']
 
             each_avg_similarity_score = each_similarity_scores / eval_repeat
             each_avg_precision_score = each_precision_scores / eval_repeat
