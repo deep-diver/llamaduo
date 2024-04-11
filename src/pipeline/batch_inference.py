@@ -1,5 +1,9 @@
 import datasets
-from datasets import load_dataset
+from datasets import (
+    Dataset,
+    DatasetDict,
+    load_dataset
+)
 from tqdm import tqdm
 
 from ..gen.local_lm import get_model, gen_model_outputs
@@ -55,6 +59,7 @@ def gen_local_lm_responses(
 
     results['model_id'] = [model_id] * len(results["instructions"])
     results['model_sha'] = [model_sha] * len(results["instructions"])
-    return datasets.Dataset.from_dict(
-        results, split=lm_response_dataset_split
+    ds = Dataset.from_dict(results)
+    return DatasetDict(
+        {lm_response_dataset_split: ds}
     )
