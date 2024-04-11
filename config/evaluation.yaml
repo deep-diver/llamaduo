@@ -5,6 +5,7 @@ lm_response_ds_id: chansung/lm_response_test
 lm_response_ds_split: batch_infer
 
 eval_data_preprocess_bs: 16
+eval_repeat: 10
 eval_workers: 4
 
 avg_similarity_threshold: 90.0

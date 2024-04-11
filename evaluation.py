@@ -23,7 +23,7 @@ async def evaluate(args):
     )
     eval_results = await eval_on_records(
         args.lm_response_ds_id, args.lm_response_ds_split,
-        args.prompt_tmpl_path, args.service_model_name, args.eval_workers,
+        args.prompt_tmpl_path, args.service_model_name, args.eval_workers, args.eval_repeat,
         args.avg_similarity_threshold, args.avg_precision_threshold,
         args.eval_data_preprocess_bs, args.eval_ds_split
     )
@@ -39,6 +39,7 @@ async def evaluate(args):
     else:
         eval_results["ds_with_scores"].save_to_disk(args.eval_ds_id)
 
+    print(eval_results)
     return eval_results
 
 if __name__ == "__main__":    
@@ -61,6 +62,7 @@ if __name__ == "__main__":
     parser.add_argument("--lm-response-ds-split", type=str, default="batch_infer",
                         help="Split of the lm response dataset to use for saving or retreiving.")
     parser.add_argument("--eval-data-preprocess-bs", type=int, default=16)
+    parser.add_argument("--eval-repeat", type=int, default=10)
     parser.add_argument("--eval-workers", type=int, default=4,
                         help="Number of workers to use for parallel evaluation.")
     parser.add_argument("--avg-similarity-threshold", type=float, default=90.0,

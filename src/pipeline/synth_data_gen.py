@@ -13,7 +13,7 @@ from datasets import (
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
-JSON_KEYS_TO_CHECK = {"contents"}
+JSON_KEYS_TO_CHECK = ["contents"]
 
 def _load_all_json_files(filenames):
     """

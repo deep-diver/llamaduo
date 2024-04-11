@@ -8,7 +8,7 @@ from datasets import load_dataset, DatasetDict
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
-JSON_KEYS_TO_CHECK = {"similarity_assessment", "precision_assessment"}
+JSON_KEYS_TO_CHECK = ["similarity_assessment.score", "precision_assessment.score"]
 
 def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     """
@@ -50,7 +50,7 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
         partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
         tasks = [
             asyncio.create_task(
-                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=5, job_num=idx)
+                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=idx)
             ) for eval_prompt in partial_eval_prompts
         ]
         results = await asyncio.gather(*tasks)
@@ -59,10 +59,15 @@ async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
         assessments.extend(results)
         
     return assessments
-    
+
+def _iterate_inner_lists(outer_list):
+    num_items = len(outer_list[0])  # Get number of items from any inner list
+    for i in range(num_items):
+        yield tuple(inner_list[i] for inner_list in outer_list)
+
 async def eval_on_records(
     lm_response_dataset_id, lm_response_dataset_split,
-    eval_prompt_tmpl_path, service_model_name, eval_workers, 
+    eval_prompt_tmpl_path, service_model_name, eval_workers, eval_repeat,
     avg_similarity_threshold, avg_precision_threshold,
     batch_size, eval_dataset_split
 ):
@@ -82,17 +87,33 @@ async def eval_on_records(
 
     for idx in tqdm(range(0, len(lm_response_ds), eval_workers), desc="batches"):
         batch_data = lm_response_ds[idx:idx+eval_workers]
-        assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers)
 
-        for partial_idx, assessment in enumerate(assessments):
-            similarity_score = assessment['similarity_assessment']['score']
-            precision_score = assessment['precision_assessment']['score']
-            similarity_scores.append(similarity_score)
-            precision_scores.append(precision_score)
+        partial_assessments = []
+        for _ in tqdm(range(eval_repeat), desc="repeat"):        
+            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers)
+            partial_assessments.append(assessments)
 
-            total_similarity_score = total_similarity_score + similarity_score
-            total_precision_score = total_precision_score + precision_score
-            print(f"eval on (sample_num={idx+partial_idx}) / similarity_score: {similarity_score}, precision_score: {precision_score}")
+        for partial_idx, each_assessments in enumerate(_iterate_inner_lists(partial_assessments)):
+            each_similarity_scores = 0
+            each_precision_scores = 0
+
+            for each_assessment in each_assessments:
+                try:
+                    each_similarity_scores += each_assessment['similarity_assessment']['score']
+                    each_precision_scores += each_assessment['precision_assessment']['score']
+                except KeyError as e:
+                    print(each_assessment)
+
+            each_avg_similarity_score = each_similarity_scores / eval_repeat
+            each_avg_precision_score = each_precision_scores / eval_repeat
+
+            similarity_scores.append(each_avg_similarity_score)
+            precision_scores.append(each_avg_precision_score)
+
+            total_similarity_score = total_similarity_score + each_avg_similarity_score
+            total_precision_score = total_precision_score + each_avg_precision_score
+
+            print(f"eval on (sample_num={idx+partial_idx}) / similarity_score: {each_avg_similarity_score}, precision_score: {each_avg_precision_score}")     
 
     ds_with_scores = lm_response_ds.add_column("similarity_scores", similarity_scores)
     ds_with_scores = ds_with_scores.add_column("precision_scores", precision_scores)

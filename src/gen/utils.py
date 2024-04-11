@@ -44,13 +44,24 @@ def _parse_first_json_snippet(snippet):
 
 def _required_keys_exist(json_dict, keys_to_check):
     """
-    _required_keys_exist checks if required keys exist in the given assessment_json
+    Checks if required keys (including nested keys) exist in the given JSON dictionary.
     """
-    qualified = keys_to_check.issubset(set(json_dict.keys()))
-    if qualified is False:
-        raise ValueError("missing required keys")
-	
-    return json_dict
+
+    def check_nested_keys(data, keys):
+        if not keys:  # Base case: All keys found
+            return True
+        current_key = keys[0]
+        if current_key in data:
+            return check_nested_keys(data[current_key], keys[1:])
+        else:
+            return False
+
+    for key_path in keys_to_check:
+        keys = key_path.split(".")  # Split nested keys like "a.b" into a list
+        if not check_nested_keys(json_dict, keys):
+            raise KeyError(f"Missing required keys: {key_path}")
+
+    return json_dict  # If all checks pass, return the dictionary
 
 async def call_service_llm(eval_model, prompt, keys_to_check, retry_num=10, job_num=None):
     """
@@ -69,6 +80,10 @@ async def call_service_llm(eval_model, prompt, keys_to_check, retry_num=10, job_
 
             json_dict = _parse_first_json_snippet(assessment)
             json_dict = _required_keys_exist(json_dict, keys_to_check)
+        except KeyError as e:
+            cur_retry = cur_retry + 1
+            json_dict = None
+            print(f"......retry [{e}]")			
         except Exception as e:
             cur_retry = cur_retry + 1
             print(f"......retry [{e}]")
