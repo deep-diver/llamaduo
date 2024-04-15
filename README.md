@@ -8,6 +8,13 @@ For this project, the following tech stacks are chosen:
 - Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
 - [Gemini API](https://ai.google.dev/docs).
 
+**Table of contents**
+
+* [Motivation](#motivation)
+* [Overview](#overview)
+* [Building on top of this project](#building-on-top-of-this-project)
+* [Acknowledgements](#acknowledgments)
+
 ## Motivation
 
 We assume that a small LLM could show comparable performance to that of a service-type LLM on a specific task, and this project tries to showcase such a possibility in a practically grounded manner. Furthermore, this project shows how to smoothly migrate from service LLM to small LLM. 
@@ -107,6 +114,15 @@ Then, the resulting outputs will be pushed to Hugging Face Dataset repository in
 | column names | generators | prompt_ids |  seed_prompts  | messages  |  category | 
 |---|---|---|---|---|---|
 | descriptions | model used to generate data | -- | the base prompts used to generate data | generated synthetic data | category this data belongs to |
+
+## Building on top of this project
+
+This project is NOT a library. It's rather a template for people to build their LLMOps pipelines on top of. Below, we give a few concrete examples to explain how this could be done:
+
+1. The automated evaluation metrics used in this project may have to change depending on your business use case. So, you could customize the `eval` prompt (refer to [`config/prompts.toml`](config/prompts.toml)) so that the underlying LLM returns the desired metrics.
+2. The small LLM is fine-tuned using the [`alignment-handbook`](https://github.com/huggingface/alignment-handbook) repository from Hugging Face. You may consider bringing your models that were fine-tuned using other tools. This project relies on the model-specific output structures for collating the results. So, if you're bringing your own models, those heuristics might have to change a bit. Feel free to open an issue on this repository if you face any difficulties. We will try our best to help :) 
+3. Finally, Gemini is used as our teacher for the small LLM. You may have a different teacher LLM in mind (GPT-4, Claude, etc. or maybe even a much bigger open-weights LLM).
+
 ## Acknowledgments
 
 This is a project built during the Gemma/Gemini sprints held by Google's ML Developer Programs team. We are thankful to be granted good amount of GCP credits to finish up this project. Thanks to Hugging Face for providing Sayak with resources to run some fine-tuning experiments. 
