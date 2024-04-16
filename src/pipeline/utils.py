@@ -1,11 +1,13 @@
 from huggingface_hub import HfApi
+from ..utils.import_utils import is_alignment_available
 
-from alignment import (
-    ModelArguments,
-    DataArguments,
-    H4ArgumentParser,
-    SFTConfig
-)
+if is_alignment_available():
+    from alignment import (
+        ModelArguments,
+        DataArguments,
+        H4ArgumentParser,
+        SFTConfig
+    )
 
 from datasets import load_dataset, concatenate_datasets
 from huggingface_hub import create_repo

@@ -4,11 +4,13 @@ from tqdm import tqdm
 from string import Template
 from datetime import datetime
 from datasets import load_dataset, DatasetDict
+from collections import deque
 
 from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm
 
 JSON_KEYS_TO_CHECK = ["similarity_assessment.score", "precision_assessment.score"]
+RATE_LIMIT_PER_MINUTE = 60 # Gemini-1.0 ratelimit
 
 def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     """
@@ -41,23 +43,63 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
         __batch_process, batched=True, batch_size=batch_size
     )
 
+def _calculate_job_distribution(rate_limit_per_minute, num_workers):
+    """
+    Calculates how many jobs to launch simultaneously and the sleep interval
+    to respect a given rate limit per minute with multiple concurrent workers.
+
+    Args:
+        rate_limit_per_minute (int): The maximum number of jobs allowed per minute.
+        num_workers (int): The number of concurrent workers.
+
+    Returns:
+        tuple: (jobs_per_batch, sleep_seconds)
+    """
+
+    # Calculate the maximum number of jobs allowed per second
+    jobs_per_second = rate_limit_per_minute / 60
+
+    # Estimate how many jobs a single worker can handle in a second, assuming 20 sec per job
+    jobs_per_worker_per_second = 1 / 20  
+
+    # Calculate how many jobs to launch per batch to stay within the rate limit
+    jobs_per_batch = int(jobs_per_second / jobs_per_worker_per_second / num_workers)
+
+    # If no jobs can be launched per batch due to constraints, handle it gracefully
+    if jobs_per_batch == 0:
+        jobs_per_batch = 1  # Launch at least one job
+        print("Warning: Rate limit and job duration may lead to exceeding the limit.")
+
+    # Calculate the sleep time between batches
+    sleep_seconds = 60 / jobs_per_batch
+
+    return jobs_per_batch, sleep_seconds
+
 async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
     """
-    _gen_eval_on_records simultaneously generates evaluations on the eval_prompts
+    _gen_eval_on_records simultaneously generates evaluations on the eval_prompts,
+    respecting rate limits and scheduling constraints.
     """
     assessments = []
-    for idx in range(0, len(eval_prompts), eval_workers):
-        partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
-        tasks = [
-            asyncio.create_task(
-                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=idx)
-            ) for eval_prompt in partial_eval_prompts
-        ]
+    jobs_at_once, sleep_interval = _calculate_job_distribution(RATE_LIMIT_PER_MINUTE, num_workers=eval_workers)
+    prompt_queue = deque(eval_prompts)  # Use a deque to efficiently manage the queue of prompts
+
+    while prompt_queue:
+        tasks = []
+        for _ in range(min(jobs_at_once, len(prompt_queue))):
+            eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
+            task = asyncio.create_task(
+                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(assessments))
+            )
+            tasks.append(task)
+        
         results = await asyncio.gather(*tasks)
         results = sorted(results, key=lambda item: item[0])
-        results = [result[1] for result in results]
-        assessments.extend(results)
-        
+        assessments.extend(result[1] for result in results)  # Simplify processing and appending
+
+        # Implement rate limiting
+        await asyncio.sleep(sleep_interval)
+
     return assessments
 
 def _iterate_inner_lists(outer_list):
