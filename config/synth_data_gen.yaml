@@ -1,4 +1,4 @@
-service_model_name: gemini-1.0-ultra-latest
+service_model_name: gemini-1.0-pro
 rate_limit_per_minute: 60
 prompt_tmpl_path: config/prompts.toml
 
