@@ -4,9 +4,10 @@ from tqdm import tqdm
 from string import Template
 from datetime import datetime
 from datasets import load_dataset, DatasetDict
+from collections import deque
 
 from ..gen.gemini import get_model as get_service_model
-from ..gen.utils import call_service_llm
+from ..gen.utils import call_service_llm, _calculate_job_distribution
 
 JSON_KEYS_TO_CHECK = ["similarity_assessment.score", "precision_assessment.score"]
 
@@ -41,23 +42,31 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
         __batch_process, batched=True, batch_size=batch_size
     )
 
-async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
+async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers, rate_limit_per_minute):
     """
-    _gen_eval_on_records simultaneously generates evaluations on the eval_prompts
+    _gen_eval_on_records simultaneously generates evaluations on the eval_prompts,
+    respecting rate limits and scheduling constraints.
     """
     assessments = []
-    for idx in range(0, len(eval_prompts), eval_workers):
-        partial_eval_prompts = eval_prompts[idx:idx+eval_workers]
-        tasks = [
-            asyncio.create_task(
-                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=idx)
-            ) for eval_prompt in partial_eval_prompts
-        ]
+    jobs_at_once, sleep_interval = _calculate_job_distribution(rate_limit_per_minute, num_workers=eval_workers)
+    prompt_queue = deque(eval_prompts)  # Use a deque to efficiently manage the queue of prompts
+
+    while prompt_queue:
+        tasks = []
+        for _ in range(min(jobs_at_once, len(prompt_queue))):
+            eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
+            task = asyncio.create_task(
+                call_service_llm(eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(assessments))
+            )
+            tasks.append(task)
+        
         results = await asyncio.gather(*tasks)
         results = sorted(results, key=lambda item: item[0])
-        results = [result[1] for result in results]
-        assessments.extend(results)
-        
+        assessments.extend(result[1] for result in results)  # Simplify processing and appending
+
+        # Implement rate limiting
+        await asyncio.sleep(sleep_interval)
+
     return assessments
 
 def _iterate_inner_lists(outer_list):
@@ -69,7 +78,7 @@ async def eval_on_records(
     lm_response_dataset_id, lm_response_dataset_split,
     eval_prompt_tmpl_path, service_model_name, eval_workers, eval_repeat,
     avg_similarity_threshold, avg_precision_threshold,
-    batch_size, eval_dataset_split
+    batch_size, eval_dataset_split, rate_limit_per_minute
 ):
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
@@ -90,7 +99,7 @@ async def eval_on_records(
 
         partial_assessments = []
         for _ in tqdm(range(eval_repeat), desc="repeat"):        
-            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers)
+            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers, rate_limit_per_minute)
             partial_assessments.append(assessments)
 
         for partial_idx, each_assessments in enumerate(_iterate_inner_lists(partial_assessments)):

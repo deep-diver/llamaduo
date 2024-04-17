@@ -1,5 +1,4 @@
 import os
-import yaml
 import argparse
 
 from utils import is_push_to_hf_hub_enabled, update_args

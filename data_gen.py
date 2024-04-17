@@ -31,7 +31,7 @@ async def synth_data_gen(args):
         args.reference_ds_id, args.reference_ds_split, 
         args.seed, args.num_samples,
         args.topic, args.prompt_tmpl_path,
-        args.service_model_name, args.gen_workers,
+        args.service_model_name, args.gen_workers, args.rate_limit_per_minute
     )
     dataset = collage_as_dataset(
         filenames, args.service_model_name, args.topic, args.synth_ds_split
@@ -63,6 +63,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
+    parser.add_argument("--rate-limit-per-minute", type=int, default=60,
+                        help="Rate-limit per minute for the service LLM.")
     parser.add_argument("--prompt-tmpl-path", type=str, 
                         default=os.path.abspath("config/prompts.toml"),
                         help="Path to the prompts TOML configuration file")
