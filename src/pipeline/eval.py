@@ -7,7 +7,7 @@ from datasets import load_dataset, DatasetDict
 from collections import deque
 
 from ..gen.gemini import get_model as get_service_model
-from ..gen.utils import call_service_llm
+from ..gen.utils import call_service_llm, _calculate_job_distribution
 
 JSON_KEYS_TO_CHECK = ["similarity_assessment.score", "precision_assessment.score"]
 RATE_LIMIT_PER_MINUTE = 60 # Gemini-1.0 ratelimit
@@ -42,38 +42,6 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
     return load_dataset(dataset_id, split=split, verification_mode="no_checks").map(
         __batch_process, batched=True, batch_size=batch_size
     )
-
-def _calculate_job_distribution(rate_limit_per_minute, num_workers):
-    """
-    Calculates how many jobs to launch simultaneously and the sleep interval
-    to respect a given rate limit per minute with multiple concurrent workers.
-
-    Args:
-        rate_limit_per_minute (int): The maximum number of jobs allowed per minute.
-        num_workers (int): The number of concurrent workers.
-
-    Returns:
-        tuple: (jobs_per_batch, sleep_seconds)
-    """
-
-    # Calculate the maximum number of jobs allowed per second
-    jobs_per_second = rate_limit_per_minute / 60
-
-    # Estimate how many jobs a single worker can handle in a second, assuming 20 sec per job
-    jobs_per_worker_per_second = 1 / 20  
-
-    # Calculate how many jobs to launch per batch to stay within the rate limit
-    jobs_per_batch = int(jobs_per_second / jobs_per_worker_per_second / num_workers)
-
-    # If no jobs can be launched per batch due to constraints, handle it gracefully
-    if jobs_per_batch == 0:
-        jobs_per_batch = 1  # Launch at least one job
-        print("Warning: Rate limit and job duration may lead to exceeding the limit.")
-
-    # Calculate the sleep time between batches
-    sleep_seconds = 60 / jobs_per_batch
-
-    return jobs_per_batch, sleep_seconds
 
 async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
     """
