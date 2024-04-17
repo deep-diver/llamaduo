@@ -8,6 +8,8 @@ For this project, the following tech stacks are chosen:
 - Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
 - [Gemini API](https://ai.google.dev/docs).
 
+Additionally, this project implements desirable features when calling the Gemini API: concurrency and rate-limiting.
+
 **Table of contents**
 
 * [Motivation](#motivation)
