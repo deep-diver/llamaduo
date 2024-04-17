@@ -94,21 +94,24 @@ async def _gen_synth_data(prompts, model, eval_workers, rate_limit_per_minute):
     jobs_at_once, sleep_interval = _calculate_job_distribution(rate_limit_per_minute, num_workers=eval_workers)
     prompt_queue = deque(prompts)
 
-    while prompt_queue:
-        tasks = []
-        for _ in range(min(jobs_at_once, len(prompt_queue))):
-            eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
-            task = asyncio.create_task(
-                call_service_llm(model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(assessments))
-            )
-            tasks.append(task)
-        
-        results = await asyncio.gather(*tasks)
-        results = sorted(results, key=lambda item: item[0])
-        generated_data.extend(results)
+    with tqdm(total=len(prompts), desc="batches") as pbar:
+        while prompt_queue:
+            tasks = []
+            for _ in range(min(jobs_at_once, len(prompt_queue))):
+                eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
+                task = asyncio.create_task(
+                    call_service_llm(model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(generated_data))
+                )
+                tasks.append(task)
+            
+            results = await asyncio.gather(*tasks)
+            results = sorted(results, key=lambda item: item[0])
+            results = [result[1] for result in results]
+            generated_data.extend(results)
+            pbar.update(len(results))
 
-        # Implement rate limiting
-        await asyncio.sleep(sleep_interval)
+            # Implement rate limiting
+            await asyncio.sleep(sleep_interval)
         
     return generated_data
 
@@ -138,7 +141,7 @@ async def synth_data_generation(
     print("Exporting to external JSON files")
     for i, (seed_prompt, data) in tqdm(enumerate(zip(prompts, generated_data)), total=len(generated_data), desc="to JSON file"):
         if data:
-            data["seed_prompts"] = seed_prompt
+            data["seed_prompt"] = seed_prompt
             filename = f"{save_dir_path}/generated_data_{i}.json"
             filenames.append(filename)
 
