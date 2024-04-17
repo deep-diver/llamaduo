@@ -10,7 +10,6 @@ from ..gen.gemini import get_model as get_service_model
 from ..gen.utils import call_service_llm, _calculate_job_distribution
 
 JSON_KEYS_TO_CHECK = ["similarity_assessment.score", "precision_assessment.score"]
-RATE_LIMIT_PER_MINUTE = 60 # Gemini-1.0 ratelimit
 
 def _get_eval_prompt_tmpl(eval_prompt_tmpl_path):
     """
@@ -43,13 +42,13 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
         __batch_process, batched=True, batch_size=batch_size
     )
 
-async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers):
+async def _gen_eval_on_records(eval_prompts, eval_model, eval_workers, rate_limit_per_minute):
     """
     _gen_eval_on_records simultaneously generates evaluations on the eval_prompts,
     respecting rate limits and scheduling constraints.
     """
     assessments = []
-    jobs_at_once, sleep_interval = _calculate_job_distribution(RATE_LIMIT_PER_MINUTE, num_workers=eval_workers)
+    jobs_at_once, sleep_interval = _calculate_job_distribution(rate_limit_per_minute, num_workers=eval_workers)
     prompt_queue = deque(eval_prompts)  # Use a deque to efficiently manage the queue of prompts
 
     while prompt_queue:
@@ -79,7 +78,7 @@ async def eval_on_records(
     lm_response_dataset_id, lm_response_dataset_split,
     eval_prompt_tmpl_path, service_model_name, eval_workers, eval_repeat,
     avg_similarity_threshold, avg_precision_threshold,
-    batch_size, eval_dataset_split
+    batch_size, eval_dataset_split, rate_limit_per_minute
 ):
     """
     eval_on_records evaluates the generated output on a given instruction dataset by local language model 
@@ -100,7 +99,7 @@ async def eval_on_records(
 
         partial_assessments = []
         for _ in tqdm(range(eval_repeat), desc="repeat"):        
-            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers)
+            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], eval_model, eval_workers, rate_limit_per_minute)
             partial_assessments.append(assessments)
 
         for partial_idx, each_assessments in enumerate(_iterate_inner_lists(partial_assessments)):

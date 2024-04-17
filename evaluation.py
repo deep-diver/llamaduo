@@ -25,7 +25,7 @@ async def evaluate(args):
         args.lm_response_ds_id, args.lm_response_ds_split,
         args.prompt_tmpl_path, args.service_model_name, args.eval_workers, args.eval_repeat,
         args.avg_similarity_threshold, args.avg_precision_threshold,
-        args.eval_data_preprocess_bs, args.eval_ds_split
+        args.eval_data_preprocess_bs, args.eval_ds_split, args.rate_limit_per_minute
     )
 
     if hf_hub is True:
@@ -54,6 +54,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
+    parser.add_argument("--rate-limit-per-minute", type=int, default=60,
+                        help="Rate-limit per minute for the service LLM.")
     parser.add_argument("--prompt-tmpl-path", type=str, 
                         default=os.path.abspath("config/prompts.toml"),
                         help="Path to the prompts TOML configuration file.")
