@@ -174,9 +174,9 @@ def collage_as_dataset(
     categories = [topic] * len(all_formatted_responses)
     dataset_train = Dataset.from_dict(
         {
-            "generators": generators,
+            "generator": generators,
             "prompt_id": prompt_ids,
-            "seed_prompts": seed_prompts,
+            "prompt": seed_prompts,
             "messages": all_formatted_responses, 
             "category": categories
         }
