@@ -1,3 +1,4 @@
+from datasets import DatasetDict
 from huggingface_hub import HfApi
 from ..utils.import_utils import is_alignment_available
 
@@ -47,6 +48,7 @@ def push_to_hf_hub(dataset_id, split, ds, append=True):
       
     if exist and append:
         existing_ds = load_dataset(dataset_id)
-        ds = concatenate_datasets([existing_ds[split], ds[split]])
+        concat_ds = concatenate_datasets([existing_ds[split], ds[split]])
+        ds = DatasetDict({split: concat_ds})
 
     ds.push_to_hub(dataset_id)
