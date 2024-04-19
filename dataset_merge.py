@@ -10,7 +10,7 @@ from huggingface_hub import create_repo
 from huggingface_hub.utils import HfHubHTTPError
 from utils import update_args
 
-FINAL_COLUMNS = ["generator", "prompt_id", "prompt", "messages", "category"]
+FINAL_COLUMNS = ["generator", "prompt_id", "prompt", "seed_prompt", "messages", "category"]
 
 def check_args(args):
     if args.first_ds_id is None or \

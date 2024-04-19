@@ -176,7 +176,7 @@ def collage_as_dataset(
         {
             "generator": generators,
             "prompt_id": prompt_ids,
-            "prompt": seed_prompts,
+            "seed_prompt": seed_prompts,
             "messages": all_formatted_responses, 
             "category": categories
         }
