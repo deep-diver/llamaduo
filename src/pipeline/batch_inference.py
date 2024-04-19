@@ -32,14 +32,13 @@ def gen_local_lm_responses(
     load_in_8bit, load_in_4bit,
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
-    lm_response_dataset_split, config_path, 
-    hf_token
+    lm_response_dataset_split, config_path
 ):
     model_args, data_args, sft_args = get_args(config_path)
     tokenizer, model_id, model = get_model(
         model_id, model_revision, load_in_8bit, load_in_4bit, model_args, data_args, sft_args,
     )
-    model_sha = get_sha(model_id, model_revision, hf_token)
+    model_sha = get_sha(model_id, model_revision)
     ds = _get_test_dataset(test_dataset_id, test_dataset_split, tokenizer, data_preprocess_bs)
 
     results = {"instructions": [], "target_responses": [], "candidate_responses": []}

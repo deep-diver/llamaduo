@@ -14,7 +14,7 @@ def batch_inference(args):
     """
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_lm_responses_to_hf_hub,
-        args.lm_response_ds_id, args.lm_response_ds_split, args.hf_token
+        args.lm_response_ds_id, args.lm_response_ds_split
     )
 
     if args.load_in_8bit is True \
@@ -28,7 +28,6 @@ def batch_inference(args):
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
         args.lm_response_ds_split, args.ft_model_config_path, 
-        args.hf_token
     )
 
     if hf_hub is True:
@@ -36,8 +35,7 @@ def batch_inference(args):
         # (instructions, target_response, candidate_response) will recorded
         push_to_hf_hub(
             args.lm_response_ds_id, args.lm_response_ds_split, 
-            local_lm_responses, 
-            args.hf_token, args.lm_response_append
+            local_lm_responses, args.lm_response_append
         )
     else:
         local_lm_responses.save_to_disk(args.lm_response_ds_id)
@@ -51,7 +49,6 @@ if __name__ == "__main__":
                         help="Gemini API key for authentication.")
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
-    parser.add_argument("--hf-token", type=str, default=os.getenv("HF_TOKEN"))
 
     parser.add_argument("--from-config", type=str, default="config/batch_inference.yaml",
                         help="set CLI options from YAML config")

@@ -1,0 +1,13 @@
+first_ds_id: sayakpaul/no_robots_only_coding
+first_ds_train_split: train_sft
+first_ds_test_split: test_sft
+
+second_ds_id: chansung/synth_ds_test6
+second_ds_train_split: train_sft
+
+push_result_ds_to_hf_hub: true
+result_ds_id: chansung/result_ds_test1
+result_ds_train_split: train_sft
+result_ds_test_split: test_sft
+result_ds_train_append: true
+result_ds_test_append: false
