@@ -167,7 +167,7 @@ def collage_as_dataset(
         partial_seed_prompts, formatted_responses = _format_response(json_dict)
         for formatted_response in formatted_responses:
             all_formatted_responses.append(formatted_response)
-            seed_prompts.append(partial_seed_prompts)
+            seed_prompts.append(partial_seed_prompts[0])
     
     generators = [service_model_name] * len(all_formatted_responses)
     prompt_ids = ["gemini-generated"] * len(all_formatted_responses)
