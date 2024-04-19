@@ -10,7 +10,7 @@ from huggingface_hub import create_repo
 from huggingface_hub.utils import HfHubHTTPError
 from utils import update_args
 
-KEEP_COLUMNS = ["generator", "prompt_id", "prompt", "messages", "category"]
+FINAL_COLUMNS = ["generator", "prompt_id", "prompt", "messages", "category"]
 
 def check_args(args):
     if args.first_ds_id is None or \
@@ -27,23 +27,51 @@ def check_args(args):
         args.result_ds_test_split is None:
         raise ValueError("some arguments for the result dataset are missing")
 
+def cleanup_ds(ds):
+    """
+    Cleans up a Hugging Face Dataset to align with a desired column structure.
+
+    Ensures that required columns from `FINAL_COLUMNS` are present, removing unnecessary
+    columns and adding missing ones with an "unknown" placeholder value.
+    """
+    columns_to_add = [col for col in FINAL_COLUMNS if col not in ds.column_names]
+    columns_to_remove = [col for col in ds.column_names if col not in FINAL_COLUMNS]
+
+    ds = ds.remove_columns(columns_to_remove)
+    for col in columns_to_add:
+        ds = ds.add_column(col, ["unknown"] * len(ds))
+
+    return ds
+
 def merge_datasets(args):
     try:
         check_args(args)
     except ValueError as e:
         print(str(e))
 
+    # grasp the first dataset
     first_train_ds = load_dataset(args.first_ds_id, split=args.first_ds_train_split)
     first_test_ds = load_dataset(args.first_ds_id, split=args.first_ds_test_split)
+    first_train_ds = cleanup_ds(first_train_ds)
+    first_test_ds = cleanup_ds(first_test_ds)
 
+    # grasp the train split of the second dataset
     second_train_ds = load_dataset(args.second_ds_id, split=args.second_ds_train_split)
+    second_train_ds = cleanup_ds(second_train_ds)
+
+    # create the train split of the resulting dataset 
     result_train_ds = concatenate_datasets([first_train_ds, second_train_ds])
+    # create the test split of the resulting dataset
     result_test_ds = first_test_ds
 
+    # if there is test split on the second dataset specified, concatenate it to the first dataset's test split
     if args.second_ds_test_split:
         second_test_ds = load_dataset(args.second_ds_id, split=args.second_ds_test_split)
+        second_test_ds = cleanup_ds(second_test_ds)
+        
         result_test_ds = concatenate_datasets([first_test_ds, second_test_ds])
 
+    # create final DatasetDict
     result_ds = DatasetDict(
         {
             args.result_ds_train_split: result_train_ds,
@@ -60,6 +88,7 @@ def merge_datasets(args):
             exist = True
 
         if exist:
+            # append train split of resulting dataset
             if args.result_ds_train_append:
                 result_ds[args.result_ds_train_split] = concatenate_datasets(
                     [
@@ -68,6 +97,10 @@ def merge_datasets(args):
                     ]
                 )
 
+            # append test split of resulting dataset
+            # appending to train and test splits separately.
+            # This is because users often only wants to append train split to 
+            # grow training dataset while keeping test split unchanged
             if args.result_ds_test_append:
                 result_ds[args.result_ds_test_split] = concatenate_datasets(
                     [
@@ -76,6 +109,7 @@ def merge_datasets(args):
                     ]
                 )
 
+        # push to the Hugging Face Hub
         result_ds.push_to_hub(
             args.result_ds_id, token=args.hf_token
         )
