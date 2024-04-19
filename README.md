@@ -38,6 +38,16 @@ This project comes with the toolset of batch inference, evaluation, and syntheti
 
 The prerequisite to run this toolset is to have a dataset consisting of desired `(prompt, response)` pairs. The exact format of the dataset can be found [here](https://huggingface.co/datasets/sayakpaul/no_robots_only_coding). The `prompt` is the input to the small-size LLM to generate output. Then, `prompt`, `response`, and the `generated output` are going to be used to evaluate the fine-tuned small-size LLM. The main idea is to make a small LLM output similar to the given response.
 
+### Hugging Face Hub authentication
+
+All steps in this project leverages Hugging Face Hub for accessing and managing of models and datasets. To avoid any unexpected erros, we recommend authenticating Hugging Face Hub before procceding steps. Hugging Face Hub authentication could be done with the follwing CLI. Simply paste the Hugging Face access token into the prompt that appears.
+
+```console
+# Alternative way is setting HUGGING_FACE_HUB_TOKEN environment variable
+# Hugging Face libraries will look up the HUGGING_FACE_HUB_TOKEN value
+$ huggingface-cli login
+```
+
 ### Fine-tuning
 
 We leverage Hugging Face's [alignment-handbook](https://github.com/huggingface/alignment-handbook) to streamline the LLM fine-tuning. Specifically, all the detailed fine-tuning parameters for this project can be found in [this config](config/sample_config.yaml). Also note that the same config can be reused for the batch inference in the next section to make sure there are no mismatched configurations.
@@ -52,10 +62,6 @@ Batch inference lets fine-tuned LLM to generate text and push the results on the
 To perform this, you need to run the following commands in the terminal:
 
 ```console
-# HF_TOKEN is required to access gated model repository 
-# and push the resulting outputs to the Hugging Face Hub.
-$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
-
 # All parameters defined in the config/batch_inference.yaml file
 # could be manually inputted as CLI arguments (arg names are the same)
 $ python batch_inference.py --from-config config/batch_inference.yaml
@@ -74,10 +80,6 @@ Evaluation evaluates the generated text from fine-tuned LLM with the help of ser
 To perform this you need to run the following commands in terminal:
 
 ```console
-# HF_TOKEN is required to access gated model repository 
-# and push the resulting outputs to the Hugging Face Hub.
-$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
-
 # GEMINI_API_KEY is required to call Gemini API
 $ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
 
@@ -99,10 +101,6 @@ Synthetic data generation generates similar data to the ones used to fine-tune t
 To perform this you need to run the following commands in terminal:
 
 ```console
-# HF_TOKEN is required to access gated model repository 
-# and push the resulting outputs to the Hugging Face Hub.
-$ export HF_TOKEN=<YOUR-HUGGINGFACE-ACCESS-TOKEN>
-
 # GEMINI_API_KEY is required to call Gemini API
 $ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
 
@@ -116,6 +114,18 @@ Then, the resulting outputs will be pushed to Hugging Face Dataset repository in
 | column names | generators | prompt_ids |  seed_prompts  | messages  |  category | 
 |---|---|---|---|---|---|
 | descriptions | model used to generate data | -- | the base prompts used to generate data | generated synthetic data | category this data belongs to |
+
+### Merging generated dataset 
+
+Synthetically generated datasets are a means of supplementing the original dataset. In order to original and synthetica datasets into account when fine-tuning a language model, both datasets better to be merged into a single dataset. This project provies a script for such purpose.
+
+To perform this you need to run the following commands in terminal. If you have more than one synthetic dataset, consider to run the same script iteratively:
+
+```console
+# All parameters defined in the config/dataset_merge.yaml file
+# could be manually inputted as CLI arguments (arg names are the same)
+$ python dataset_merge.py --from-config config/dataset_merge.yaml
+```
 
 ## Building on top of this project
 
