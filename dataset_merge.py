@@ -14,8 +14,7 @@ FINAL_COLUMNS = ["generator", "prompt_id", "prompt", "seed_prompt", "messages", 
 
 def check_args(args):
     if args.first_ds_id is None or \
-        args.first_ds_train_split is None or \
-        args.first_ds_test_split is None:
+        args.first_ds_train_split is None:
         raise ValueError("some arguments for the first dataset are missing")
 
     if args.second_ds_id is None or \
@@ -51,9 +50,7 @@ def merge_datasets(args):
 
     # grasp the first dataset
     first_train_ds = load_dataset(args.first_ds_id, split=args.first_ds_train_split)
-    first_test_ds = load_dataset(args.first_ds_id, split=args.first_ds_test_split)
     first_train_ds = cleanup_ds(first_train_ds)
-    first_test_ds = cleanup_ds(first_test_ds)
 
     # grasp the train split of the second dataset
     second_train_ds = load_dataset(args.second_ds_id, split=args.second_ds_train_split)
@@ -61,23 +58,37 @@ def merge_datasets(args):
 
     # create the train split of the resulting dataset 
     result_train_ds = concatenate_datasets([first_train_ds, second_train_ds])
-    # create the test split of the resulting dataset
-    result_test_ds = first_test_ds
+
+    result_test_ds = None
+    if args.first_ds_test_split is not None:
+        first_test_ds = load_dataset(args.first_ds_id, split=args.first_ds_test_split)    
+        first_test_ds = cleanup_ds(first_test_ds)
+        result_test_ds = first_test_ds
 
     # if there is test split on the second dataset specified, concatenate it to the first dataset's test split
-    if args.second_ds_test_split:
+    if args.second_ds_test_split is not None:
         second_test_ds = load_dataset(args.second_ds_id, split=args.second_ds_test_split)
         second_test_ds = cleanup_ds(second_test_ds)
         
-        result_test_ds = concatenate_datasets([first_test_ds, second_test_ds])
+        if args.first_ds_test_split is None:
+            result_test_ds = second_test_ds
+        else:
+            result_test_ds = concatenate_datasets([first_test_ds, second_test_ds])
 
     # create final DatasetDict
-    result_ds = DatasetDict(
-        {
-            args.result_ds_train_split: result_train_ds,
-            args.result_ds_test_split: result_test_ds
-        }
-    )
+    if result_test_ds is None:
+        result_ds = DatasetDict(
+            {
+                args.result_ds_train_split: result_train_ds,
+            }
+        )
+    else:
+        result_ds = DatasetDict(
+            {
+                args.result_ds_train_split: result_train_ds,
+                args.result_ds_test_split: result_test_ds
+            }
+        )
 
     if args.push_result_ds_to_hf_hub:
         exist = False
@@ -101,7 +112,7 @@ def merge_datasets(args):
             # appending to train and test splits separately.
             # This is because users often only wants to append train split to 
             # grow training dataset while keeping test split unchanged
-            if args.result_ds_test_append:
+            if result_test_ds is not None and args.result_ds_test_append:
                 result_ds[args.result_ds_test_split] = concatenate_datasets(
                     [
                         result_ds[args.result_ds_test_split], 
