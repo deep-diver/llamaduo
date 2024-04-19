@@ -115,6 +115,18 @@ Then, the resulting outputs will be pushed to Hugging Face Dataset repository in
 |---|---|---|---|---|---|
 | descriptions | model used to generate data | -- | the base prompts used to generate data | generated synthetic data | category this data belongs to |
 
+### Merging generated dataset 
+
+Synthetically generated datasets are a means of supplementing the original dataset. In order to original and synthetica datasets into account when fine-tuning a language model, both datasets better to be merged into a single dataset. This project provies a script for such purpose.
+
+To perform this you need to run the following commands in terminal. If you have more than one synthetic dataset, consider to run the same script iteratively:
+
+```console
+# All parameters defined in the config/dataset_merge.yaml file
+# could be manually inputted as CLI arguments (arg names are the same)
+$ python dataset_merge.py --from-config config/dataset_merge.yaml
+```
+
 ## Building on top of this project
 
 This project is NOT a library. It's rather a template for people to build their LLMOps pipelines on top of. Below, we give a few concrete examples to explain how this could be done:
