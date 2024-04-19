@@ -19,7 +19,7 @@ async def evaluate(args):
 
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_eval_to_hf_hub,
-        args.eval_ds_id, args.eval_ds_split, args.hf_token
+        args.eval_ds_id, args.eval_ds_split
     )
     eval_results = await eval_on_records(
         args.lm_response_ds_id, args.lm_response_ds_split,
@@ -33,8 +33,7 @@ async def evaluate(args):
         # eval_prompts, similarity_scores, precision_scores) will be recorded
         push_to_hf_hub(
             args.eval_ds_id, args.eval_ds_split, 
-            eval_results["ds_with_scores"],
-            args.hf_token, False
+            eval_results["ds_with_scores"], False
         )
     else:
         eval_results["ds_with_scores"].save_to_disk(args.eval_ds_id)
@@ -47,7 +46,6 @@ if __name__ == "__main__":
 
     parser.add_argument("--gemini-api-key", type=str, default=os.getenv("GEMINI_API_KEY"),
                         help="Gemini API key for authentication.")
-    parser.add_argument("--hf-token", type=str, default=os.getenv("HF_TOKEN"))
 
     parser.add_argument("--from-config", type=str, default="config/evaluation.yaml",
                         help="set CLI options from YAML config")

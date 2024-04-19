@@ -25,7 +25,7 @@ async def synth_data_gen(args):
 
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_synth_ds_to_hf_hub,
-        args.synth_ds_id, args.synth_ds_split, args.hf_token
+        args.synth_ds_id, args.synth_ds_split
     )
     filenames = await synth_data_generation(
         args.reference_ds_id, args.reference_ds_split, 
@@ -41,7 +41,7 @@ async def synth_data_gen(args):
         # dataset with columns of (prompts, prompt_ids, messages, categories) will be recorded
         push_to_hf_hub(
             args.synth_ds_id, args.synth_ds_split, 
-            dataset, args.hf_token, args.synth_ds_append
+            dataset, args.synth_ds_append
         )
     else:
         dataset.save_to_disk(args.synth_ds_id)
@@ -56,7 +56,6 @@ if __name__ == "__main__":
 
     parser.add_argument("--gemini-api-key", type=str, default=os.getenv("GEMINI_API_KEY"),
                         help="Gemini API key for authentication.")
-    parser.add_argument("--hf-token", type=str, default=os.getenv("HF_TOKEN"))
 
     parser.add_argument("--from-config", type=str, default="config/synth_data_gen.yaml",
                         help="set CLI options from YAML config")

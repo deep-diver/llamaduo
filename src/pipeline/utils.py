@@ -24,14 +24,14 @@ def get_args(yaml_file_path):
     
     return configs
 
-def get_sha(model_id, revision, hf_token):
-    hf_api = HfApi(token=hf_token)
+def get_sha(model_id, revision):
+    hf_api = HfApi()
     model_info = hf_api.model_info(
         model_id, revision=revision
     )
     return model_info.sha
 
-def push_to_hf_hub(dataset_id, split, ds, hf_token, append=True):
+def push_to_hf_hub(dataset_id, split, ds, append=True):
     """
     push_to_hf_hub pushes ds to the Hugging Face Dataset repository of
     dataset_id ID. If dataset_id does not exist, it creates one. If not, 
@@ -41,7 +41,7 @@ def push_to_hf_hub(dataset_id, split, ds, hf_token, append=True):
     exist = False
 
     try:
-        create_repo(dataset_id, repo_type="dataset", token=hf_token)
+        create_repo(dataset_id, repo_type="dataset")
     except HfHubHTTPError as e:
         exist = True
       
@@ -49,4 +49,4 @@ def push_to_hf_hub(dataset_id, split, ds, hf_token, append=True):
         existing_ds = load_dataset(dataset_id)
         ds = concatenate_datasets([existing_ds[split], ds[split]])
 
-    ds.push_to_hub(dataset_id, token=hf_token)
+    ds.push_to_hub(dataset_id)

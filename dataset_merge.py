@@ -79,11 +79,11 @@ def merge_datasets(args):
         }
     )
 
-    if args.push_result_ds_to_hf_hub and args.hf_token is not None:
+    if args.push_result_ds_to_hf_hub:
         exist = False
 
         try:
-            create_repo(args.result_ds_id, repo_type="dataset", token=args.hf_token)
+            create_repo(args.result_ds_id, repo_type="dataset")
         except HfHubHTTPError as e:
             exist = True
 
@@ -110,9 +110,7 @@ def merge_datasets(args):
                 )
 
         # push to the Hugging Face Hub
-        result_ds.push_to_hub(
-            args.result_ds_id, token=args.hf_token
-        )
+        result_ds.push_to_hub(args.result_ds_id)
 
     else:
         result_ds.save_to_disk(args.result_ds_id)
@@ -120,7 +118,6 @@ def merge_datasets(args):
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description="CLI for merging two datasets")
 
-    parser.add_argument("--hf-token", type=str, default=os.getenv("HF_TOKEN"))
     parser.add_argument("--from-config", type=str, default="config/dataset_merge.yaml",
                         help="set CLI options from YAML config")
 
