@@ -22,7 +22,7 @@ lora_target_modules:
 
 # Data training arguments
 dataset_mixer:
-  sayakpaul/no_robots_only_coding: 1.0
+  chansung/merged_ds_coding: 1.0
 dataset_splits:
 - train_sft
 - test_sft
@@ -39,7 +39,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: gemma-7b-sft-qlora-no-robots
+hub_model_id: chansung/coding_llamaduo_result1
 hub_strategy: every_save
 learning_rate: 2.0e-04
 log_level: info
@@ -48,11 +48,11 @@ logging_strategy: steps
 lr_scheduler_type: cosine
 max_seq_length: 2048
 max_steps: -1
-num_train_epochs: 1
-output_dir: data/gemma-7b-sft-qlora-no-robots
+num_train_epochs: 5
+output_dir: data/coding_llamaduo_result1
 overwrite_output_dir: true
-per_device_eval_batch_size: 8
-per_device_train_batch_size: 4
+per_device_eval_batch_size: 2
+per_device_train_batch_size: 2
 push_to_hub: true
 report_to:
 - tensorboard
