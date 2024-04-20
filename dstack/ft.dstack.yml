@@ -13,7 +13,7 @@ commands:
   - conda install cuda
   - git clone https://github.com/huggingface/alignment-handbook.git
   - mkdir -p alignment-handbook/recipes/custom/
-  - cp $FT_MODEL_CONFIG_PATH alignment-handbook/recipes/custom/config.yaml
+  - cp "$FT_MODEL_CONFIG_PATH" alignment-handbook/recipes/custom/config.yaml
 
   - cd alignment-handbook
   - python -m pip install .
@@ -27,8 +27,7 @@ ports:
   - 6006
   
 resources:
-  spot_policy: "spot"
   gpu:
-    memory: 80GB
-    name: A100
+    memory: 40GB
+    name: A6000
     count: 2
