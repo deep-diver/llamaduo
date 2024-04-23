@@ -8,10 +8,10 @@ else:
 
 
 _alignment_available = importlib.util.find_spec("alignment") is not None
-try:
-    _alignment_version = importlib_metadata.version("alignment")
-except importlib_metadata.PackageNotFoundError:
-    _alignment_available = False
+# try:
+#     _alignment_version = importlib_metadata.version("alignment")
+# except importlib_metadata.PackageNotFoundError:
+#     _alignment_available = False
 
 def is_alignment_available():
     return _alignment_available
