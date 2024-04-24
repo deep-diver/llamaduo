@@ -3,9 +3,13 @@ from transformers import (
     AutoModelForCausalLM,
     BitsAndBytesConfig
 )
-from alignment.model_utils import get_tokenizer
+from alignment.model_utils import (
+    get_tokenizer,
+    get_quantization_config,
+    get_kbit_device_map
+)
 
-def get_model(model_id, model_revision, load_in_8bit, load_in_4bit, model_args, data_args, sft_args):
+def get_model(model_id, model_revision, model_args, data_args, sft_args):
     """
     get_model instantiates and return fine-tuned language model and tokenzier.
 
@@ -15,14 +19,19 @@ def get_model(model_id, model_revision, load_in_8bit, load_in_4bit, model_args, 
     """
     model_id = sft_args.hub_model_id if model_id is None else model_id
     tokenizer = get_tokenizer(model_args, data_args)
-    quantization_config = BitsAndBytesConfig(load_in_8bit=load_in_8bit, load_in_4bit=load_in_4bit)
-    
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        revision=model_revision, 
-        quantization_config=quantization_config, 
-        torch_dtype=torch.bfloat16, device_map="auto"
-    )
+    torch_dtype = (
+        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
+    )    
+    quantization_config = get_quantization_config(model_args)
+    model_kwargs = dict(
+        revision=model_revision,
+        trust_remote_code=model_args.trust_remote_code,
+        use_flash_attention_2=model_args.use_flash_attention_2,
+        torch_dtype=torch_dtype,
+        device_map=get_kbit_device_map() if quantization_config is not None else None,
+        quantization_config=quantization_config,
+    )    
+    model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
 
     return tokenizer, model_id, model
 
@@ -47,7 +56,6 @@ def gen_model_outputs(model, tokenizer, batch_data, temperature=0.4, max_new_tok
         do_sample=True,
         temperature=temperature,
         max_new_tokens=max_new_tokens,
-        repetition_penalty=1.5
     )
     
     outputs = []
