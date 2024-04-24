@@ -24,7 +24,6 @@ def batch_inference(args):
 
     local_lm_responses = gen_local_lm_responses(
         args.ft_model_id, args.ft_model_revision,
-        args.load_in_8bit, args.load_in_4bit,
         args.test_ds_id, args.test_ds_split, 
         args.batch_infer_data_preprocess_bs, args.inference_bs, args.repeat,
         args.lm_response_ds_split, args.ft_model_config_path, 
@@ -60,10 +59,6 @@ if __name__ == "__main__":
     parser.add_argument("--ft-model-config-path", type=str, 
                         default=os.path.abspath("config/sample_config.yaml"),
                         help="Path to the fine-tuned model configuration file.")
-    parser.add_argument("--load-in-8bit", action="store_true",
-                        help="Load the model weights in 8-bit quantization.")
-    parser.add_argument("--load-in-4bit", action="store_true",
-                        help="Load the model weights in 4-bit quantization.")    
     parser.add_argument("--test-ds-id", type=str, default=None,
                         help="ID of the test dataset.")
     parser.add_argument("--test-ds-split", type=str, default="test_sft",

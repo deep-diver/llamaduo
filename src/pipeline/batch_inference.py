@@ -29,7 +29,6 @@ def _get_test_dataset(dataset_id, split, tokenizer, batch_size):
 
 def gen_local_lm_responses(
     model_id, model_revision, 
-    load_in_8bit, load_in_4bit,
     test_dataset_id, test_dataset_split, 
     data_preprocess_bs, inference_bs, repeat,
     lm_response_dataset_split, config_path
