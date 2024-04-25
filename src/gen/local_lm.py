@@ -28,7 +28,7 @@ def get_model(model_id, model_revision, model_args, data_args, sft_args):
         trust_remote_code=model_args.trust_remote_code,
         use_flash_attention_2=model_args.use_flash_attention_2,
         torch_dtype=torch_dtype,
-        device_map=get_kbit_device_map() if quantization_config is not None else None,
+        device_map="auto",
         quantization_config=quantization_config,
     )    
     model = AutoModelForCausalLM.from_pretrained(model_id, **model_kwargs)
