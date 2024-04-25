@@ -17,11 +17,6 @@ def batch_inference(args):
         args.lm_response_ds_id, args.lm_response_ds_split
     )
 
-    if args.load_in_8bit is True \
-        and args.load_in_4bit is True:
-        raise ValueError("both load_in_8bit and load_in_4bit are set. "
-                            "only one of them should be set at a time")
-
     local_lm_responses = gen_local_lm_responses(
         args.ft_model_id, args.ft_model_revision,
         args.test_ds_id, args.test_ds_split, 
