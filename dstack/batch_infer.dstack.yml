@@ -3,42 +3,18 @@ type: task
 python: "3.11"
 
 env:
-  - FT_MODEL_CONFIG_PATH=configs/sample_config.yaml
-  - HF_TOKEN=<Your Hugging Face access token>
+  - HUGGING_FACE_HUB_TOKEN=<YOUR-HUGGING-FACE-HUB-AT>
 
-  - FT_MODEL_ID=sayakpaul/gemma-2b-sft-qlora-no-robots
-  
-  - TEST_DS_ID=sayakpaul/no_robots_only_coding
-  - TEST_DS_SPLIT=test_sft
-
-  - LM_RESPONSE_DS_ID=<Your Hugging Face Dataset repo id to save the results>
-  - LM_RESPONSE_DS_SPLIT=<Split name>
 commands:
   - conda install cuda
-  - cd llmops-pipeline
-
   - pip install -r requirements.txt
 
-  - > 
-    python main.py --step batch-infer 
-    --ft-model-id $FT_MODEL_ID 
-    --ft-model-config-path $FT_MODEL_CONFIG_PATH 
-    --load-in-8bit 
-    --test-ds-id $TEST_DS_ID 
-    --test-ds-split $TEST_DS_SPLIT 
-    --batch-infer-data-preprocess-bs 16 
-    --repeat 4 
-    --inference-bs 4 
-    --push-lm-responses-to-hf-hub 
-    --lm-response-ds-id $LM_RESPONSE_DS_ID 
-    --lm-response-ds-split $LM_RESPONSE_DS_SPLIT 
-    --lm-response-append 
-    --hf-token $HF_TOKEN 
+  - python batch_inference.py
 ports:
   - 6006
   
 resources:
-  spot_policy: "spot"
   gpu:
-    memory: 24GB
+    name: A100
+    memory: 40GB
     count: 1
