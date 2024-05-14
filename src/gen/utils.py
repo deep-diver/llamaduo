@@ -63,7 +63,7 @@ def _required_keys_exist(json_dict, keys_to_check):
 
     return json_dict  # If all checks pass, return the dictionary
 
-async def call_service_llm(eval_model, prompt, keys_to_check, retry_num=10, job_num=None):
+async def call_service_llm(client, eval_model, prompt, keys_to_check, retry_num=10, job_num=None, **model_kwargs):
     """
     call_service_llm makes API call to service language model (currently Gemini)
     it makes sure the generated output by the service language model in a certain JSON format
@@ -74,8 +74,8 @@ async def call_service_llm(eval_model, prompt, keys_to_check, retry_num=10, job_
 
     while json_dict is None and cur_retry < retry_num:
         try:
-            assessment = await generate_async(
-                eval_model, prompt=prompt,
+            assessment = await client.generate_text(
+                eval_model, prompt=prompt, **model_kwargs
             )
 
             json_dict = _parse_first_json_snippet(assessment)

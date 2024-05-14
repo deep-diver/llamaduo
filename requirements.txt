@@ -9,3 +9,5 @@ toml
 pyyaml
 huggingface_hub
 tqdm
+# openai, gemini, gemini-vertex, anthropic, anthropic-vertex, anthropic-bedrock
+genai-apis[gemini]

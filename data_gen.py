@@ -3,6 +3,8 @@ import argparse
 import asyncio
 import google.generativeai as genai
 
+from genai_apis import APIFactory
+
 from utils import is_push_to_hf_hub_enabled, update_args
 from src.pipeline.synth_data_gen import (
     synth_data_generation, collage_as_dataset
@@ -20,8 +22,13 @@ async def synth_data_gen(args):
     Additionally it goes through arguments' validation, and 
     it pushes generated evaluations to the specified Hugging Face Dataset repo.
     """    
-    if args.gemini_api_key is not None:
-        genai.configure(api_key=args.gemini_api_key)
+    service_llm_kwargs = {
+        "api_key": args.service_llm_api_key,
+        "GCP_PROJECT_ID": args.gcp_project_id,
+        "GCP_PROJECT_LOCATION": args.gcp_location,
+        "AWS_LOCATION": args.aws_location,
+    }
+    service_llm_client = APIFactory.get_api_client(args.service_llm_provider, **service_llm_kwargs)
 
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_synth_ds_to_hf_hub,
@@ -31,7 +38,8 @@ async def synth_data_gen(args):
         args.reference_ds_id, args.reference_ds_split, 
         args.seed, args.num_samples,
         args.topic, args.prompt_tmpl_path,
-        args.service_model_name, args.gen_workers, args.rate_limit_per_minute
+        service_llm_client, args.service_model_name, 
+        args.gen_workers, args.rate_limit_per_minute
     )
     dataset = collage_as_dataset(
         filenames, args.service_model_name, args.topic, args.synth_ds_split
@@ -54,14 +62,20 @@ async def synth_data_gen(args):
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser(description="CLI for synthetic generation step")
 
-    parser.add_argument("--gemini-api-key", type=str, default=os.getenv("GEMINI_API_KEY"),
-                        help="Gemini API key for authentication.")
+    parser.add_argument("--service-llm-provider", type=str, default="gemini",
+                        help="Which service LLM provider to choose")
+    parser.add_argument("--service-llm-api-key", type=str, default=os.getenv("SERVICE_LLM_API_KEY"),
+                        help="API KEY for selected service LLM. Credentials for GCP, AWS based LLM, "
+                        "use dedicated authentication CLI (ignore this option)")
+    parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
+                        help="Which service LLM to use for evaluation of the local fine-tuned model")
+    parser.add_argument("--gcp-project-id", type=str, default=os.getenv("GCP_PROJECT_ID"))
+    parser.add_argument("--gcp-location", type=str, default=os.getenv("GCP_LOCATION"))
+    parser.add_argument("--aws-location", type=str, default=os.getenv("AWS_LOCATION"))
 
     parser.add_argument("--from-config", type=str, default="config/synth_data_gen.yaml",
                         help="set CLI options from YAML config")
 
-    parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
-                        help="Which service LLM to use for evaluation of the local fine-tuned model")
     parser.add_argument("--rate-limit-per-minute", type=int, default=60,
                         help="Rate-limit per minute for the service LLM.")
     parser.add_argument("--prompt-tmpl-path", type=str, 
