@@ -1,4 +1,5 @@
 import os
+import yaml
 import asyncio
 import argparse
 
@@ -22,6 +23,8 @@ async def evaluate(args):
         "AWS_LOCATION": args.aws_location,
     }
     service_llm_client = APIFactory.get_api_client(args.service_llm_provider, **service_llm_kwargs)
+    with open(args.service_llm_gen_config_path, 'r') as file:
+        service_llm_gen_configs = yaml.safe_load(file)
 
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_eval_to_hf_hub,
@@ -29,7 +32,7 @@ async def evaluate(args):
     )
     eval_results = await eval_on_records(
         args.lm_response_ds_id, args.lm_response_ds_split, args.prompt_tmpl_path, 
-        service_llm_client, args.service_model_name,
+        service_llm_client, args.service_model_name, service_llm_gen_configs,
         args.eval_workers, args.eval_repeat,
         args.avg_similarity_threshold, args.avg_precision_threshold,
         args.eval_data_preprocess_bs, args.eval_ds_split, args.rate_limit_per_minute
@@ -58,6 +61,7 @@ if __name__ == "__main__":
                         "use dedicated authentication CLI (ignore this option)")
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
+    parser.add_argument("--service-llm-gen-config-path", type=str, default="config/gemini_gen_configs.yaml")
     parser.add_argument("--gcp-project-id", type=str, default=os.getenv("GCP_PROJECT_ID"))
     parser.add_argument("--gcp-location", type=str, default=os.getenv("GCP_LOCATION"))
     parser.add_argument("--aws-location", type=str, default=os.getenv("AWS_LOCATION"))
@@ -88,6 +92,7 @@ if __name__ == "__main__":
                         help="Hugging Face Dataset repository ID")
     parser.add_argument("--eval-ds-split", type=str, default="eval",
                         help="Split of the lm evak dataset to use for saving.") 
+
     args = parser.parse_args()
     args = update_args(parser, args)
 

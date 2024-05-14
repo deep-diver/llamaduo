@@ -86,7 +86,7 @@ def _craft_prompts(samples, topic, prompt_tmpl_path):
     ]
     return prompts
 
-async def _gen_synth_data(prompts, client, model, eval_workers, rate_limit_per_minute):
+async def _gen_synth_data(prompts, client, model, gen_configs, eval_workers, rate_limit_per_minute):
     """
     _gen_synth_data concurrently generates synthetic data based on the given prompts
     """
@@ -100,7 +100,7 @@ async def _gen_synth_data(prompts, client, model, eval_workers, rate_limit_per_m
             for _ in range(min(jobs_at_once, len(prompt_queue))):
                 eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
                 task = asyncio.create_task(
-                    call_service_llm(client, model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(generated_data))
+                    call_service_llm(client, model, eval_prompt, gen_configs, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(generated_data))
                 )
                 tasks.append(task)
             
@@ -119,7 +119,7 @@ async def synth_data_generation(
     dataset_id, split, 
     seed, num_sample,
     topic, prompt_tmpl_path,
-    service_llm_client, service_model_name, 
+    service_llm_client, service_model_name, service_llm_gen_configs,
     gen_workers, rate_limit_per_minute
 ):
     """
@@ -134,7 +134,7 @@ async def synth_data_generation(
     prompts = _craft_prompts(samples, topic, prompt_tmpl_path)
 
     print("Generating synthetic data")
-    generated_data = await _gen_synth_data(prompts, service_llm_client, service_model_name, gen_workers, rate_limit_per_minute)
+    generated_data = await _gen_synth_data(prompts, service_llm_client, service_model_name, service_llm_gen_configs, gen_workers, rate_limit_per_minute)
 
     save_dir_path = tempfile.gettempdir()
     filenames = []

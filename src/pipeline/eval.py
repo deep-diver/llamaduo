@@ -42,7 +42,7 @@ def _get_lm_response_dataset(dataset_id, split, eval_prompt_tmpl, batch_size):
         __batch_process, batched=True, batch_size=batch_size
     )
 
-async def _gen_eval_on_records(eval_prompts, client, eval_model, eval_workers, rate_limit_per_minute):
+async def _gen_eval_on_records(eval_prompts, client, eval_model, gen_configs, eval_workers, rate_limit_per_minute):
     """
     _gen_eval_on_records simultaneously generates evaluations on the eval_prompts,
     respecting rate limits and scheduling constraints.
@@ -56,7 +56,7 @@ async def _gen_eval_on_records(eval_prompts, client, eval_model, eval_workers, r
         for _ in range(min(jobs_at_once, len(prompt_queue))):
             eval_prompt = prompt_queue.popleft()  # Take the prompt from the front of the queue
             task = asyncio.create_task(
-                call_service_llm(client, eval_model, eval_prompt, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(assessments))
+                call_service_llm(client, eval_model, eval_prompt, gen_configs, JSON_KEYS_TO_CHECK, retry_num=10, job_num=len(assessments))
             )
             tasks.append(task)
         
@@ -76,7 +76,7 @@ def _iterate_inner_lists(outer_list):
 
 async def eval_on_records(
     lm_response_dataset_id, lm_response_dataset_split, eval_prompt_tmpl_path, 
-    service_llm_client, service_model_name, eval_workers, eval_repeat,
+    service_llm_client, service_model_name, service_llm_gen_configs, eval_workers, eval_repeat,
     avg_similarity_threshold, avg_precision_threshold,
     batch_size, eval_dataset_split, rate_limit_per_minute
 ):
@@ -100,7 +100,7 @@ async def eval_on_records(
 
         partial_assessments = []
         for _ in tqdm(range(eval_repeat), desc="repeat"):        
-            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], service_llm_client, service_model_name, eval_workers, rate_limit_per_minute)
+            assessments = await _gen_eval_on_records(batch_data["eval_prompts"], service_llm_client, service_model_name, service_llm_gen_configs, eval_workers, rate_limit_per_minute)
             partial_assessments.append(assessments)
 
         for partial_idx, each_assessments in enumerate(_iterate_inner_lists(partial_assessments)):

@@ -1,4 +1,5 @@
 import os
+import yaml
 import argparse
 import asyncio
 import google.generativeai as genai
@@ -29,6 +30,8 @@ async def synth_data_gen(args):
         "AWS_LOCATION": args.aws_location,
     }
     service_llm_client = APIFactory.get_api_client(args.service_llm_provider, **service_llm_kwargs)
+    with open(args.service_llm_gen_config_path, 'r') as file:
+        service_llm_gen_configs = yaml.safe_load(file)
 
     hf_hub = is_push_to_hf_hub_enabled(
         args.push_synth_ds_to_hf_hub,
@@ -38,7 +41,7 @@ async def synth_data_gen(args):
         args.reference_ds_id, args.reference_ds_split, 
         args.seed, args.num_samples,
         args.topic, args.prompt_tmpl_path,
-        service_llm_client, args.service_model_name, 
+        service_llm_client, args.service_model_name, service_llm_gen_configs,
         args.gen_workers, args.rate_limit_per_minute
     )
     dataset = collage_as_dataset(
@@ -69,6 +72,7 @@ if __name__ == "__main__":
                         "use dedicated authentication CLI (ignore this option)")
     parser.add_argument("--service-model-name", type=str, default="gemini-1.0-pro",
                         help="Which service LLM to use for evaluation of the local fine-tuned model")
+    parser.add_argument("--service-llm-gen-config-path", type=str, default="config/gemini_gen_configs.yaml")
     parser.add_argument("--gcp-project-id", type=str, default=os.getenv("GCP_PROJECT_ID"))
     parser.add_argument("--gcp-location", type=str, default=os.getenv("GCP_LOCATION"))
     parser.add_argument("--aws-location", type=str, default=os.getenv("AWS_LOCATION"))
