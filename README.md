@@ -2,11 +2,11 @@
 
 <img src="assets/logo.png" style="display: block; margin-left: auto; margin-right: auto;">
 
-This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model to prepare for the outage of the service LLM. For this project, we choose [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model.
+This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model to prepare for the outage of the service LLM. For this project, we have initially chosen [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model. It now supports other service LLMs such as GPT4 and Claude3.
 
 For this project, the following tech stacks are chosen:
 - Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
-- [Gemini API](https://ai.google.dev/docs).
+- [Gemini API(AI Studio)](https://ai.google.dev/docs), [Gemini API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini), [OpenAI API](https://openai.com/index/openai-api/), [Anthropic API](https://www.anthropic.com/api), [Anthropic API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude), [Anthropic API(AWS Bedrock)](https://docs.anthropic.com/en/docs/intro-to-claude).
 
 Additionally, this project implements desirable features when calling the Gemini API: concurrency and rate-limiting.
 
@@ -46,6 +46,33 @@ All steps in this project leverages Hugging Face Hub for accessing and managing 
 # Alternative way is setting HUGGING_FACE_HUB_TOKEN environment variable
 # Hugging Face libraries will look up the HUGGING_FACE_HUB_TOKEN value
 $ huggingface-cli login
+```
+
+### Choosing service LLM
+
+Step 3(evaluation) and 4(synthetic data generation) require access to a service LLM. This project leverages [genai-apis](https://github.com/deep-diver/genai-apis) library to switch between different service LLMs. The supported service LLMs include [Gemini API(AI Studio)](https://ai.google.dev/docs), [Gemini API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini), [OpenAI API](https://openai.com/index/openai-api/), [Anthropic API](https://www.anthropic.com/api), [Anthropic API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude), [Anthropic API(AWS Bedrock)](https://docs.anthropic.com/en/docs/intro-to-claude). To use one of these, you need to follow the instructions below:
+
+```console
+$ # openai, gemini, gemini-vertex, anthropic, anthropic-vertex, anthropic-bedrock
+$ pip install genai-apis[gemini]
+
+$ # for openai, gemini, and anthropic, set API key as below
+$ # for *-vertex and *-bedrock, use gcloud or aws CLIs to get credentials
+$ export SERVICE_LLM_API_KEY=XXXX
+
+$ # for *-vertex and *-bedrock, setup the additional environment variables
+$ export GCP_PROJECT_ID=XXXX
+$ export GCP_LOCATION=XXXX
+$ export AWS_LOCATION=XXXX
+
+$ # choose the right service provider and model when running
+$ # the step 3 and 4 with evaluation.py and data_gen.py
+$ python evaluation.py ... --service-llm-provider gemini --service-model-name gemini-1.0-pro
+
+$ # additionally, setup service type specific generation config
+$ # gemini: config/gemini_gen_configs.yaml
+$ # openai: config/gpt_gen_configs.yaml
+$ # claude: config/claude_gen_configs.yaml
 ```
 
 ### Fine-tuning
