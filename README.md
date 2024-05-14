@@ -80,8 +80,8 @@ Evaluation evaluates the generated text from fine-tuned LLM with the help of ser
 To perform this you need to run the following commands in terminal:
 
 ```console
-# GEMINI_API_KEY is required to call Gemini API
-$ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
+# For Gemini as a evaluator (Google AI Studio)
+$ export SERVICE_LLM_API_KEY=<YOUR-GEMINI-API-KEY>
 
 # All parameters defined in the config/evaluation.yaml file
 # could be manually inputted as CLI arguments (arg names are the same)
@@ -101,8 +101,8 @@ Synthetic data generation generates similar data to the ones used to fine-tune t
 To perform this you need to run the following commands in terminal:
 
 ```console
-# GEMINI_API_KEY is required to call Gemini API
-$ export GEMINI_API_KEY=<YOUR-GEMINI-API-KEY>
+# For Gemini as a evaluator (Google AI Studio)
+$ export SERVICE_LLM_API_KEY=<YOUR-GEMINI-API-KEY>
 
 # All parameters defined in the config/synth_data_gen.yaml file
 # could be manually inputted as CLI arguments (arg names are the same)
