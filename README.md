@@ -112,7 +112,7 @@ $ export SERVICE_LLM_API_KEY=<YOUR-GEMINI-API-KEY>
 
 # All parameters defined in the config/evaluation.yaml file
 # could be manually inputted as CLI arguments (arg names are the same)
-$ python batch_inference.py --from-config config/evaluation.yaml
+$ python evaluation.py --from-config config/evaluation.yaml
 ```
 
 Then, the resulting outputs will be pushed to Hugging Face Dataset repository in the following structure ([example](https://huggingface.co/datasets/chansung/eval_dataset_test)):
