@@ -107,9 +107,9 @@ Here are the recipes that we used to fine-tune Gemma 2B and 7B, Mistral 7B 0.3, 
 - recipes for Gemma7B ([summarization](), [classification](), [coding](), [closedQA]())
   - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
   - weights on [256k Summarization]()
-- recipes for Mistral7B ([summarization](), [classification](), [coding](), [closedQA]())
+- recipes for Mistral7B ([summarization](config/mistral_7b/fine-tune/mistral_7b_0.3_summarization_128k.yaml), [classification](config/mistral_7b/fine-tune/mistral_7b_0.3_classification_100k.yaml), [coding](config/mistral_7b/fine-tune/mistral_7b_0.3_coding_100k.yaml), [closedQA](config/mistral_7b/fine-tune/mistral_7b_0.3_closedqa_100k.yaml))
   - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
-- recipes for LLaMA3 ([summarization](), [classification](), [coding](), [closedQA]())
+- recipes for LLaMA3 ([summarization](config/llama3_8b/fine-tune/llama3_8b_summarization_128k.yaml), [classification](config/llama3_8b/fine-tune/llama3_8b_classification_100k.yaml), [coding](config/llama3_8b/fine-tune/llama3_8b_coding_100k.yaml), [closedQA](config/llama3_8b/fine-tune/llama3_8b_closedqa_100k.yaml))
   - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
 
 ### Batch inference
