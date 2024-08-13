@@ -101,16 +101,10 @@ The initial coverage dataset should follow the format as below. This is essentia
 We leverage Hugging Face's [alignment-handbook](https://github.com/huggingface/alignment-handbook) to streamline the LLM fine-tuning. Specifically, all the detailed fine-tuning parameters for this project can be found in [this config](config/sample_config.yaml). Also note that the same config can be reused for the batch inference in the next section to make sure there are no mismatched configurations.
 
 Here are the recipes that we used to fine-tune Gemma 2B and 7B, Mistral 7B 0.3, and LLaMA3 8B models
-- recipes for Gemma2B ([summarization](), [classification](), [coding](), [closedQA]())
-  - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
-  - weights on [256k Summarization]()
-- recipes for Gemma7B ([summarization](), [classification](), [coding](), [closedQA]())
-  - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
-  - weights on [256k Summarization]()
-- recipes for Mistral7B ([summarization](config/mistral_7b/fine-tune/mistral_7b_0.3_summarization_128k.yaml), [classification](config/mistral_7b/fine-tune/mistral_7b_0.3_classification_100k.yaml), [coding](config/mistral_7b/fine-tune/mistral_7b_0.3_coding_100k.yaml), [closedQA](config/mistral_7b/fine-tune/mistral_7b_0.3_closedqa_100k.yaml))
-  - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
-- recipes for LLaMA3 ([summarization](config/llama3_8b/fine-tune/llama3_8b_summarization_128k.yaml), [classification](config/llama3_8b/fine-tune/llama3_8b_classification_100k.yaml), [coding](config/llama3_8b/fine-tune/llama3_8b_coding_100k.yaml), [closedQA](config/llama3_8b/fine-tune/llama3_8b_closedqa_100k.yaml))
-  - weights on [Summarization](), [Coding](), [ClosedQA](), [Classification]()
+- recipes for Gemma2B ([summarization](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/gemma2b/gpt4o/gemma_2b_gpt4o_256k.yaml), [classification](), [coding](), [closedQA]())
+- recipes for Gemma7B ([summarization](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/gemma7b/gpt4o/gemma_7b_gpt4o_256k.yaml), [classification](), [coding](), [closedQA]())
+- recipes for Mistral7B ([summarization](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/mistral_7b/fine-tune/mistral_7b_0.3_summarization_128k.yaml), [classification](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/mistral_7b/fine-tune/mistral_7b_0.3_classification_100k.yaml), [coding](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/mistral_7b/fine-tune/mistral_7b_0.3_coding_100k.yaml), [closedQA](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/mistral_7b/fine-tune/mistral_7b_0.3_closedqa_100k.yaml))
+- recipes for LLaMA3 ([summarization](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/llama3_8b/fine-tune/llama3_8b_summarization_128k.yaml), [classification](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/llama3_8b/fine-tune/llama3_8b_classification_100k.yaml), [coding](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/llama3_8b/fine-tune/llama3_8b_coding_100k.yaml), [closedQA](https://github.com/deep-diver/llamaduo/blob/paper/aaai/config/llama3_8b/fine-tune/llama3_8b_closedqa_100k.yaml)) 
 
 ### Batch inference
 
