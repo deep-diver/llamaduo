@@ -1,18 +1,15 @@
-# LLaMADuo
+# LlamaDuo
 
 <img src="assets/logo.png" style="display: block; margin-left: auto; margin-right: auto;">
 
-This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model to prepare for the outage of the service LLM. For this project, we have initially chosen [Gemini 1.0 Pro](https://deepmind.google/technologies/gemini/) for service type LLM and [Gemma](https://blog.google/technology/developers/gemma-open-models/) 2B/7B for small sized LLM model. It now supports other service LLMs such as GPT4 and Claude3.
+<div><p align="center"><a href="https://huggingface.co/papers/2408.13467">Paper Link on 🤗</a></p></div>
 
-For this project, the following tech stacks are chosen:
-- Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
-- [Gemini API(AI Studio)](https://ai.google.dev/docs), [Gemini API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini), [OpenAI API](https://openai.com/index/openai-api/), [Anthropic API](https://www.anthropic.com/api), [Anthropic API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude), [Anthropic API(AWS Bedrock)](https://docs.anthropic.com/en/docs/intro-to-claude).
-
-Additionally, this project implements desirable features when calling the Gemini API: concurrency and rate-limiting.
+This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model to prepare for the outage of the service LLM. For this project, we chose [GPT4o](https://openai.com/index/hello-gpt-4o/), [Claude 3 Sonnet](https://docs.anthropic.com/en/docs/about-claude/models#model-comparison-table), [Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/) as service LLM for data synthesis and response evaluation, and we chose [Gemma 2B, 7B](https://blog.google/technology/developers/gemma-open-models/), [Mistral 7B 0.3](https://huggingface.co/mistralai/Mistral-7B-v0.3), and [LLaMA3 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B) for small sized LLM. To understand the effectiveness and feasibility of LlamaDuo, please read our [paper](https://huggingface.co/papers/2408.13467) with comprehensive analysis.
 
 **Table of contents**
 
 * [Motivation](#motivation)
+* [Tech stacks](#tech-stacks)
 * [Overview](#overview)
 * [Building on top of this project](#building-on-top-of-this-project)
 * [Acknowledgements](#acknowledgments)
@@ -30,9 +27,17 @@ Assume that service LLM is integrated into your service or system. However, from
 
 To better prepare for such impacting situations, this project suggests migrating from a service LLM to a local small LLM. Since we are satisfied with the results from service LLM, we know our inputs (prompts) and the desired outputs. Then, we can fine-tune small size LLM on the collected prompts to match the desired outputs. Furthermore, if the fine-tuned LLM's performance is still poor, we can grow the size of the dataset by generating more similar data via service LLM. 
 
+## Tech stacks
+
+For this project, the following tech stacks are chosen:
+- Hugging Face open source ecosystem ([`transformers`](https://github.com/huggingface/transformers), [`peft`](https://github.com/huggingface/peft), [`alignment-handbook`](https://github.com/huggingface/alignment-handbook), [`huggingface_hub`](https://huggingface.co/docs/hub/en/index))
+- [Gemini API(AI Studio)](https://ai.google.dev/docs), [Gemini API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini), [OpenAI API](https://openai.com/index/openai-api/), [Anthropic API](https://www.anthropic.com/api), [Anthropic API(Vertex AI)](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude), [Anthropic API(AWS Bedrock)](https://docs.anthropic.com/en/docs/intro-to-claude).
+
+Additionally, this project implements desirable features when calling the Gemini API: concurrency and rate-limiting.
+
 ## Overview
 
-<img src="assets/figure.png" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="https://github.com/deep-diver/llamaduo/blob/paper/aaai/assets/main.png?raw=true" style="display: block; margin-left: auto; margin-right: auto;">
 
 This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
