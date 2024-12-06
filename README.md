@@ -2,9 +2,25 @@
 
 <img src="assets/logo.png" style="display: block; margin-left: auto; margin-right: auto;">
 
-<div><p align="center"><a href="https://huggingface.co/papers/2408.13467">Paper Link on 🤗</a></p></div>
+<div><p align="center"><a href="https://huggingface.co/papers/2408.13467">[Paper Link on 🤗]</a><a href="https://huggingface.co/llama-duo">[Model Checkpoints & Synthetic Datasets on 🤗]</a></p></div>
+
 
 This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model to prepare for the outage of the service LLM. For this project, we chose [GPT4o](https://openai.com/index/hello-gpt-4o/), [Claude 3 Sonnet](https://docs.anthropic.com/en/docs/about-claude/models#model-comparison-table), [Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/) as service LLM for data synthesis and response evaluation, and we chose [Gemma 2B, 7B](https://blog.google/technology/developers/gemma-open-models/), [Mistral 7B 0.3](https://huggingface.co/mistralai/Mistral-7B-v0.3), and [LLaMA3 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B) for small sized LLM. To understand the effectiveness and feasibility of LlamaDuo, please read our [paper](https://huggingface.co/papers/2408.13467) with comprehensive analysis.
+
+
+> [!IMPORTANT]
+> 
+> If you use the data or code in this repo, please cite the repo.
+
+```BibTex
+@article{park2024llamaduo,
+  title={LlamaDuo: LLMOps Pipeline for Seamless Migration from Service LLMs to Small-Scale Local LLMs},
+  author={Park, Chansung and Jiang, Juyong and Wang, Fan and Paul, Sayak and Tang, Jing},
+  journal={arXiv preprint arXiv:2408.13467},
+  year={2024}
+}
+```
+
 
 **Table of contents**
 
@@ -159,6 +175,10 @@ To perform this you need to run the following commands in terminal. If you have 
 $ python dataset_merge.py --from-config config/dataset_merge.yaml
 ```
 
+<div align="right">
+    <b><a href="#table-of-contents">↥ back to top</a></b>
+</div>
+
 ## Building on top of this project
 
 This project is NOT a library. It's rather a template for people to build their LLMOps pipelines on top of. Below, we give a few concrete examples to explain how this could be done:
@@ -170,3 +190,12 @@ This project is NOT a library. It's rather a template for people to build their 
 ## Acknowledgments
 
 This is a project built during the Gemma/Gemini sprints held by Google's ML Developer Programs team. We are thankful to be granted good amount of GCP credits to finish up this project. Thanks to Hugging Face for providing Sayak with resources to run some fine-tuning experiments. 
+
+
+<div align="right">
+    <b><a href="#table-of-contents">↥ back to top</a></b>
+</div>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=deep-diver/llamaduo&type=Date)](https://star-history.com/#deep-diver/llamaduo&Date)
