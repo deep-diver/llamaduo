@@ -10,7 +10,7 @@ This project showcases an LLMOps pipeline that fine-tunes a small-size LLM model
 
 > [!IMPORTANT]
 > 
-> If you use the data or code in this repo, please cite the repo.
+> If you use the data or code in this repo, please consider citing the following paper.
 
 ```BibTex
 @article{park2024llamaduo,
