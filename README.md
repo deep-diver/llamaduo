@@ -46,7 +46,7 @@ To better prepare for such impacting situations, this project suggests migrating
 
 ## Overview
 
-<img src="assets/main.png" style="display: block; margin-left: auto; margin-right: auto;">
+<img width="1198" alt="Screenshot 2025-02-16 at 9 57 06 PM" src="https://github.com/user-attachments/assets/543ee96d-779c-425f-abea-2a1b7c76d4e3" />
 
 This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
