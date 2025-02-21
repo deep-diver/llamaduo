@@ -53,7 +53,7 @@ Additionally, this project implements desirable features when calling the Gemini
 
 ## Overview
 
-<img src="https://github.com/deep-diver/llamaduo/blob/paper/aaai/assets/main.png?raw=true" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="./assets/pipeline.jpg?raw=true" style="display: block; margin-left: auto; margin-right: auto;">
 
 This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
