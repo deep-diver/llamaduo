@@ -53,7 +53,7 @@ Additionally, this project implements desirable features when calling the Gemini
 
 ## Overview
 
-<img src="https://github.com/deep-diver/llamaduo/blob/paper/aaai/assets/main.png?raw=true" style="display: block; margin-left: auto; margin-right: auto;">
+![](https://private-user-images.githubusercontent.com/26025527/413615997-543ee96d-779c-425f-abea-2a1b7c76d4e3.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDAxMTUwODYsIm5iZiI6MTc0MDExNDc4NiwicGF0aCI6Ii8yNjAyNTUyNy80MTM2MTU5OTctNTQzZWU5NmQtNzc5Yy00MjVmLWFiZWEtMmExYjdjNzZkNGUzLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAyMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMjIxVDA1MTMwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE2NmU2YmYxMzRiYTQ2YzY4ZDgwYjJmMWY5MDhlMjYxMWFmNjI5ZTJkYTE0ZGQzMGJiOTg3MjZkNTllYzU0YzEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.a8br9mVoav5uo7BcitmNzDE141BPnl8lJjA6JZqDggA)
 
 This project comes with the toolset of batch inference, evaluation, and synthetic data generation. Each tool can be run independently, but they could be hooked up to form a pipeline. It's on the end user to figure out the best way to collate these together. 
 
