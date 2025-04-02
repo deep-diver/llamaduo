@@ -10,8 +10,7 @@ The widespread adoption of cloud-based proprietary large language models (LLMs) 
 * [Tech stacks](#tech-stacks)
 * [Motivation](#motivation)
 * [Overview](#overview)
-* [Building on top of this project](#building-on-top-of-this-project)
-* [Acknowledgements](#acknowledgments)
+* [Synthetic Datasets](#synthetic-dataset-from-llamaDuo)
 
 ## Tech stacks
 
@@ -171,3 +170,14 @@ To perform this you need to run the following commands in terminal. If you have 
 # could be manually inputted as CLI arguments (arg names are the same)
 $ python dataset_merge.py --from-config config/dataset_merge.yaml
 ```
+
+# Synthetic Dataset from LlamaDuo
+
+We openly provide all the datasets synthetically generated via GPT-4o, Gemini 1.5 Flash, and Claude 3 Sonnet. To use it, please check out the [data](./data) directory.
+
+1. **synth_classification_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on classification task
+2. **synth_closedqa_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on closedqa task
+3. **synth_coding_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on coding task
+4. **synth_summarize_ds_gpt4o_dedup**: GPT4o generated 256K synthetic dataset on summarize task
+5. **synth_summarize_ds_gemini1_5flash_dedup**: Gemini 1.5 Flash generated 256K synthetic dataset on summarize task
+6. **synth_summarize_ds_claude3sonnet_dedup**: Claude 3 Sonnet generated 256K synthetic dataset on summarize task
