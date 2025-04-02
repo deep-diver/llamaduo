@@ -1,11 +1,11 @@
 # Synthetic Dataset from LlamaDuo
 
-1. synth_classification_ds_gpt4o_dedup: GPT4o generated 128K synthetic dataset on classification task
-2. synth_closedqa_ds_gpt4o_dedup: GPT4o generated 128K synthetic dataset on closedqa task
-3. synth_coding_ds_gpt4o_dedup: GPT4o generated 128K synthetic dataset on coding task
-4. synth_summarize_ds_gpt4o_dedup: GPT4o generated 256K synthetic dataset on summarize task
-5. synth_summarize_ds_gemini1_5flash_dedup: Gemini 1.5 Flash generated 256K synthetic dataset on summarize task
-6. synth_summarize_ds_claude3sonnet_dedup: Claude 3 Sonnet generated 256K synthetic dataset on summarize task
+1. **synth_classification_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on classification task
+2. **synth_closedqa_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on closedqa task
+3. **synth_coding_ds_gpt4o_dedup**: GPT4o generated 128K synthetic dataset on coding task
+4. **synth_summarize_ds_gpt4o_dedup**: GPT4o generated 256K synthetic dataset on summarize task
+5. **synth_summarize_ds_gemini1_5flash_dedup**: Gemini 1.5 Flash generated 256K synthetic dataset on summarize task
+6. **synth_summarize_ds_claude3sonnet_dedup**: Claude 3 Sonnet generated 256K synthetic dataset on summarize task
 
 Since the dataset is large, they are splitted into multi-parts. Use be below tool to combine.
 
