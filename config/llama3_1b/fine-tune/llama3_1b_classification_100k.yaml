@@ -33,7 +33,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: llama-duo/llama3-8b-classification-gpt4o-100k
+hub_model_id: llama-duo/llama3-1b-classification-gpt4o-100k
 hub_strategy: every_save
 learning_rate: 2.0e-04
 log_level: info
@@ -43,10 +43,10 @@ lr_scheduler_type: cosine
 max_seq_length: 1024
 max_steps: -1
 num_train_epochs: 10
-output_dir: llama3-8b-classification-gpt4o-100k
+output_dir: llama3-1b-classification-gpt4o-100k
 overwrite_output_dir: true
-per_device_eval_batch_size: 4
-per_device_train_batch_size: 4
+per_device_eval_batch_size: 32
+per_device_train_batch_size: 32
 push_to_hub: true
 report_to:
 - tensorboard

@@ -1,7 +1,7 @@
-ft_model_id: llama-duo/llama3-8b-coding-gpt4o-100k
+ft_model_id: llama-duo/llama3-3b-coding-gpt4o-100k2
 ft_model_revision: main
-ft_model_config_path: config/llama3.1_8b/batch-infer/llama3.1_8b_coding_100k.yaml
-ft_model_gen_config_path: config/llama3.1_8b/batch-infer/ft_gen_configs.yaml
+ft_model_config_path: config/llama3_3b/fine-tune/llama3_3b_coding_100k.yaml
+ft_model_gen_config_path: config/llama3_3b/batch-infer/ft_gen_configs.yaml
 user_delimiter: user
 model_delimiter: assistant
 
@@ -13,6 +13,6 @@ inference_bs: 8
 repeat: 4
 
 push_lm_responses_to_hf_hub: true
-lm_response_ds_id: llama-duo/llama3-8b-coding-locallm-response
-lm_response_ds_split: llama3_8b_coding_gpt4o_100k
+lm_response_ds_id: llama-duo/llama3-3b-coding-locallm-response
+lm_response_ds_split: llama3_3b_coding_gpt4o_100k
 lm-response-append: false
