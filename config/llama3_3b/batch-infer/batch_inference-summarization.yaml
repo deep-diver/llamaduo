@@ -1,0 +1,18 @@
+ft_model_id: llama-duo/llama3-3b-summarize-gpt4o-128k
+ft_model_revision: main
+ft_model_config_path: config/llama3_3b/fine-tune/llama3_3b_summarization_128k.yaml
+ft_model_gen_config_path: config/llama3_3b/batch-infer/ft_gen_configs.yaml
+user_delimiter: user
+model_delimiter: assistant
+
+test_ds_id: llama-duo/coverage_dataset
+test_ds_split: test_summarize
+
+batch_infer_data_preprocess_bs: 16
+inference_bs: 8
+repeat: 4
+
+push_lm_responses_to_hf_hub: true
+lm_response_ds_id: llama-duo/llama3-3b-summarize-locallm-response
+lm_response_ds_split: llama3_3b_summarize_gpt4o_128k
+lm-response-append: false

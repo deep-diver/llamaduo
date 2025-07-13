@@ -1,0 +1,18 @@
+ft_model_id: llama-duo/mistral_7b_0_3-coding-gpt4o-100k
+ft_model_revision: main
+ft_model_config_path: config/mistral_7b/batch-infer/mistral_7b_0.3_coding_100k.yaml
+ft_model_gen_config_path: config/mistral_7b/batch-infer/ft_gen_configs.yaml
+user_delimiter: user
+model_delimiter: assistant
+
+test_ds_id: llama-duo/coverage_dataset
+test_ds_split: test_coding
+
+batch_infer_data_preprocess_bs: 16
+inference_bs: 8
+repeat: 4
+
+push_lm_responses_to_hf_hub: true
+lm_response_ds_id: llama-duo/mistral-7b_0_3-coding-locallm-response
+lm_response_ds_split: mistral_7b_0_3_coding_gpt4o_100k
+lm-response-append: false

@@ -1,0 +1,7 @@
+padding_side: left
+do_sample: True
+temperature: 0.8
+max_new_tokens: 1024
+stop_strings: 
+  - "<|im_end|>"
+  - "<|end_of_text|>"

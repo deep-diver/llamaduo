@@ -1,0 +1,22 @@
+service_llm_provider: anthropic
+service_model_name: claude-3-sonnet-20240229
+rate_limit_per_minute: 1000
+prompt_tmpl_path: config/prompts.toml
+service_llm_gen_config_path: config/llama3_1b/eval/claude_gen_configs.yaml
+
+lm_response_ds_id: llama-duo/llama3-1b-closedqa-locallm-response
+lm_response_ds_split: llama3_1b_closedqa_gpt4o_100k
+
+eval_data_preprocess_bs: 16
+eval_repeat: 10
+
+rate_limit_on: false
+eval_workers: 100
+
+avg_similarity_threshold: 90.0
+avg_precision_threshold: 90.0
+
+push_eval_to_hf_hub: true
+eval_ds_id: llama-duo/llama3-1b-closedqa-eval-by-claude3sonnet
+eval_ds_split: llama3_1b_closedqa_gpt4o_100k_by_claude3sonnet
+eval_ds_append: true
